@@ -129,11 +129,13 @@
   <ItemGroup>
     <ClCompile Include="audioQueue.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RS232Comm.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audioQueue.h" />
+    <ClInclude Include="RS232Comm.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="ui.h" />
   </ItemGroup>
