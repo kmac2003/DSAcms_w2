@@ -20,14 +20,16 @@ Comments:		Projects III - Coded Messaging System
 #include <string.h>
 #include <windows.h>
 
+
+
 //print the user menu
-void displayMenu(){
-    printf("\n============= CMS MENU - KIEN TROY MATTHEW ================\n");
-    printf("1. Record a new message\n");
-    printf("2. Save current message\n");
-    printf("3. Play front message\n");
-    printf("4. Delete front message\n");
-    printf("5. Exit");
+void transmittingMenu(){
+    printf("\n============= TRANSMITTING STATION ================\n");
+    printf("1. Write a new text message\n");
+    printf("2. Record new audio message\n");
+    printf("3. Enter testing\n");
+    printf("4. Open phonebook\n");
+    printf("5. Back to menu");
     printf("\n===========================================================\n");
 }
 
@@ -84,3 +86,30 @@ void deleteFront(){
     free(deleted->Data.buffer);
     free(deleted);
 }
+
+//select whether the program functions as a transmitter or receiver
+int selectStation() {
+    int mode;
+    printf("====================================================\n");
+    printf("    CMS PROJECT - KIEN MATTHEW TROY\n");
+    printf("====================================================\n");
+    printf("Which station do you want this device to be?\n");
+    printf("1 - Transmitter\n");
+    printf("2 - Receiver\n");
+    printf("3 - Quit\n");
+    printf("\nEnter choice: ");
+    scanf_s("%d", &mode);
+    while (getchar() != '\n'); // flush newline
+    return mode;
+}
+
+void receivingMenu(){
+    printf("\n============= RECEIVING STATION ================\n");
+    printf("1. Write a new text message\n");
+    printf("2. Record new audio message\n");
+    printf("3. Enter testing\n");
+    printf("4. Open phonebook\n");
+    printf("5. Back to menu");
+    printf("\n===========================================================\n");
+}
+

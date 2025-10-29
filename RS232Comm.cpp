@@ -10,6 +10,7 @@
 
 #define EX_FATAL 1
 
+
 // Initializes the port and sets the communication parameters
 void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) {
 	createPortFile(hCom, COMPORT);						// Initializes hCom to point to PORT#
