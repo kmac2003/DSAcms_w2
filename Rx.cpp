@@ -61,23 +61,17 @@ void receiverLoop(HANDLE* hComRx){
 			break;
 
 		case PLAY_AUDIO:
-			system("cls");
 			printf("\nplaying audio\n");
-			break;
-
-		case Rx_TESTING:
-			system("cls");
-			printf("\ntesting\n");
-			break;
-
-		case Rx_PHONEBOOK:
-			system("cls");
-			printf("\nlooking at phonebook\n");
+			Sleep(2000);
 			break;
 
 		case Rx_GO_BACK:
 			Rx_goBack();
 			running = FALSE;
+			break;
+
+		default:
+			invalid();
 			break;
 		}
 	}

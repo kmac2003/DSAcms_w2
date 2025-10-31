@@ -66,23 +66,17 @@ void transmitterLoop(HANDLE* hComTx){
 			break;
 
 		case NEW_AUDIO:
-			system("cls");
 			printf("\nrecording audio\n");
-			break;
-
-		case Tx_TESTING:
-			system("cls");
-			printf("\ntesting\n");
-			break;
-
-		case Tx_PHONEBOOK:
-			system("cls");
-			printf("\nlooking at phonebook\n");
+			Sleep(2000);
 			break;
 
 		case Tx_GO_BACK:
 			Tx_goBack();
 			running = FALSE;
+			break;
+
+		default:
+			invalid();
 			break;
 		}
 	}

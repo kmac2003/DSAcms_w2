@@ -93,14 +93,17 @@ void invalid() {
 //w2
 //select whether the program functions as a transmitter or receiver
 int selectStation() {
+    system("cls");
     int mode;
     printf("====================================================\n");
     printf("    CMS PROJECT - KIEN MATTHEW TROY\n");
     printf("====================================================\n");
-    printf("Which station do you want this device to be?\n");
-    printf("1 - Transmitter\n");
-    printf("2 - Receiver\n");
-    printf("3 - Quit\n");
+    printf("1 - Transmit\n");
+    printf("2 - Receive\n");
+    printf("3 - Enter testing\n");
+    printf("4 - Open phonebook\n");
+    printf("5 - Settings\n");
+    printf("6 - Quit\n");
     printf("\nEnter choice: ");
     scanf_s("%d", &mode);
     while (getchar() != '\n'); // flush newline
@@ -109,23 +112,21 @@ int selectStation() {
 
 //print receiver menu
 void receivingMenu(){
+    system("cls");
     printf("\n============= RECEIVING STATION ================\n");
     printf("1. Play recent text message\n");
     printf("2. Play recent audio message\n");
-    printf("3. Enter testing\n");
-    printf("4. Open phonebook\n");
-    printf("5. Back to menu");
+    printf("3. Back to menu");
     printf("\n===========================================================\n");
 }
 
 //print transmitter menu
 void transmittingMenu() {
+    system("cls");
     printf("\n============= TRANSMITTING STATION ================\n");
     printf("1. Write a new text message\n");
     printf("2. Record new audio message\n");
-    printf("3. Enter testing\n");
-    printf("4. Open phonebook\n");
-    printf("5. Back to menu");
+    printf("3. Back to menu");
     printf("\n===========================================================\n");
 }
 
@@ -153,9 +154,25 @@ void runModeLoop(){
             purgePort(&hComRx);
             break;
 
+        case TESTING:
+            system("cls");
+            printf("testing\n");
+            break;
+
+        case PHONEBOOK:
+            system("cls");
+            printf("phonebook\n");
+            break;
+
+        case SETTINGS:
+            system("cls");
+            printf("settings\n");
+            break;
+
         case QUIT:
             quit();
             break;
+
         default: //invalid
             invalid();
             continue;

@@ -18,25 +18,24 @@ Comments:		Projects III - Coded Messaging System
 enum SELECT_MODE {
 	TRANSMITTER = 1,
 	RECEIVER = 2,
-	QUIT = 3
+	TESTING = 3,
+	PHONEBOOK = 4,
+	SETTINGS = 5,
+	QUIT = 6
 };
 
 //w2
 enum TRANSMITTER_CHOICES {
 	NEW_TEXT = 1,
 	NEW_AUDIO = 2,
-	Tx_TESTING = 3,
-	Tx_PHONEBOOK = 4,
-	Tx_GO_BACK = 5
+	Tx_GO_BACK = 3
 };
 
 //w2
 enum RECEIVER_CHOICES {
 	PLAY_TEXT = 1,
 	PLAY_AUDIO = 2,
-	Rx_TESTING = 3,
-	Rx_PHONEBOOK = 4,
-	Rx_GO_BACK = 5
+	Rx_GO_BACK = 3
 };
 
 //w1
