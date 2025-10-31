@@ -30,6 +30,12 @@
     <ClCompile Include="RS232Comm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -42,6 +48,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RS232Comm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

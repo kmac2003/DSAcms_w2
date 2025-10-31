@@ -1,8 +1,21 @@
-/* RS232Comm.h - Interface for the RS232 communications module
- * By: Michael A. Galle
- *
- */
+/*
+===================================================== SECTION HEADER =====================================================
+
+Program Name:   EECE72405-25F
+Author:			KIEN MACARTNEY
+Date:           OCT 30 2025
+Comments:		Projects III - Coded Messaging System
+
+				RS232 cable header file
+
+				*** Week 2 ***
+
+
+
+==========================================================================================================================
+*/
 #pragma once
+#define BUFSIZE 140
 
 
 // Prototype the functions to be used
@@ -14,3 +27,5 @@ DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf);
 // Sub functions
 void createPortFile(HANDLE* hCom, wchar_t* COMPORT);
 static int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS timeout);
+
+//w2

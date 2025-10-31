@@ -1,16 +1,18 @@
 /*
-
-================================== SECTION HEADER =====================================
+===================================================== SECTION HEADER =====================================================
 
 Program Name:   EECE72405-25F
-Author:         KIEN MACARTNEY
-Date:           OCT 15 2025
+Author:			KIEN MACARTNEY
+Date:           OCT 30 2025
 Comments:		Projects III - Coded Messaging System
 
-				User interface implementation file
+                User interface implementation file
 
-=======================================================================================
+                *** Week 2 ***
 
+
+
+==========================================================================================================================
 */
 #include "ui.h"
 #include "audioQueue.h"
@@ -22,17 +24,8 @@ Comments:		Projects III - Coded Messaging System
 
 
 
-//print the user menu
-void transmittingMenu(){
-    printf("\n============= TRANSMITTING STATION ================\n");
-    printf("1. Write a new text message\n");
-    printf("2. Record new audio message\n");
-    printf("3. Enter testing\n");
-    printf("4. Open phonebook\n");
-    printf("5. Back to menu");
-    printf("\n===========================================================\n");
-}
 
+//w1
 //record a new message and enqueue it
 void recordNew(){
     char name[MAX_FILENAME];
@@ -87,6 +80,7 @@ void deleteFront(){
     free(deleted);
 }
 
+//w2
 //select whether the program functions as a transmitter or receiver
 int selectStation() {
     int mode;
@@ -103,8 +97,20 @@ int selectStation() {
     return mode;
 }
 
+//print receiver menu
 void receivingMenu(){
     printf("\n============= RECEIVING STATION ================\n");
+    printf("1. Play recent text message\n");
+    printf("2. Play recent audio message\n");
+    printf("3. Enter testing\n");
+    printf("4. Open phonebook\n");
+    printf("5. Back to menu");
+    printf("\n===========================================================\n");
+}
+
+//print transmitter menu
+void transmittingMenu() {
+    printf("\n============= TRANSMITTING STATION ================\n");
     printf("1. Write a new text message\n");
     printf("2. Record new audio message\n");
     printf("3. Enter testing\n");

@@ -1,7 +1,19 @@
-/* RS232Comm.cpp - Implementation for the RS232 communications module
- * By: Michael A. Galle
- *
- */
+/*
+===================================================== SECTION HEADER =====================================================
+
+Program Name:   EECE72405-25F
+Author:			KIEN MACARTNEY
+Date:           OCT 30 2025
+Comments:		Projects III - Coded Messaging System
+
+				RS232 cable implementation file
+
+				*** Week 2 ***
+
+
+
+==========================================================================================================================
+*/
 #include <Windows.h>    // Includes the functions for serial communication via RS232
 #include <stdlib.h>
 #include <stdio.h>
