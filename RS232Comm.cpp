@@ -105,9 +105,11 @@ void createPortFile(HANDLE* hCom, wchar_t* COMPORT) {
 	
 	if (*hCom == INVALID_HANDLE_VALUE) {
 		printf("\nFatal Error 0x%x: Unable to open\n", GetLastError());
+		Sleep(2000);
 	}
 	else {
 		printf("\nCOM is now open\n");
+		Sleep(2000);
 	}
 }
 

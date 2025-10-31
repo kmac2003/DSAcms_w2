@@ -34,6 +34,7 @@ void playText(HANDLE* hComRx){
 	bytesRead = inputFromPort(hComRx, msgIn, BUFSIZE);
 	msgIn[bytesRead] = '\0';
 	printf("Message received: %s\n", msgIn);
+	Sleep(3000);
 }
 
 //notify user, delay and clear screen

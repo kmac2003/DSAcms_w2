@@ -141,14 +141,14 @@ void runModeLoop(){
 
         switch (mode) {
         case TRANSMITTER:
-            hComTx = setupComPort(L"COM6", nComRate, nComBits, timeout); //setup Tx port
+            hComTx = setupComPort(L"COM7", nComRate, nComBits, timeout); //setup Tx port
             transmitterLoop(&hComTx); //run transmitter menu loop
             CloseHandle(hComTx);
             purgePort(&hComTx);
             break;
 
         case RECEIVER:
-            hComRx = setupComPort(L"COM5", nComRate, nComBits, timeout); //setup Rx port
+            hComRx = setupComPort(L"COM8", nComRate, nComBits, timeout); //setup Rx port
             receiverLoop(&hComRx); //run receiver menu loop
             CloseHandle(hComRx);
             purgePort(&hComRx);
