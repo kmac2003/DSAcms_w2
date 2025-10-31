@@ -8,22 +8,22 @@ Comments:		Projects III - Coded Messaging System
 
 				Transmitting implementation file
 
-				*** Week 2 ***
-
-
-
 ==========================================================================================================================
 */
+#include <Windows.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "Tx.h"
+#include "Rx.h"
+#include "ui.h"
 #include "RS232Comm.h"
+#include "sound.h"
+#include "audioQueue.h"
 
-
+//variables
 size_t len;
 char msgOut[BUFSIZE];
-
 
 //creates and sends new text messages
 void newText(HANDLE* hComTx){
@@ -47,4 +47,43 @@ void Tx_goBack(){
 	printf("\nReturning to previous menu...\n");
 	Sleep(1000);
 	system("cls");
+}
+
+//main transmitter branch loop
+void transmitterLoop(HANDLE* hComTx){
+	int Tx_choice;
+	int running = TRUE;
+
+	while (running) {
+		transmittingMenu();
+		printf("\nSelect an option: "); //collect user input
+		scanf_s("%d", &Tx_choice);
+		while (getchar() != '\n'); //flush extra input from 'enter'
+
+		switch (Tx_choice) {
+		case NEW_TEXT:
+			newText(hComTx); //create and send new text messages
+			break;
+
+		case NEW_AUDIO:
+			system("cls");
+			printf("\nrecording audio\n");
+			break;
+
+		case Tx_TESTING:
+			system("cls");
+			printf("\ntesting\n");
+			break;
+
+		case Tx_PHONEBOOK:
+			system("cls");
+			printf("\nlooking at phonebook\n");
+			break;
+
+		case Tx_GO_BACK:
+			Tx_goBack();
+			running = FALSE;
+			break;
+		}
+	}
 }

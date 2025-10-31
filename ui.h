@@ -8,14 +8,13 @@ Comments:		Projects III - Coded Messaging System
 
 				User interface header file
 
-				*** Week 2 ***
-
-
-
 ==========================================================================================================================
 */
 #pragma once
 
+#include <Windows.h>
+
+//w2
 enum SELECT_MODE {
 	TRANSMITTER = 1,
 	RECEIVER = 2,
@@ -45,12 +44,15 @@ extern short iBigBuf[]; //global recording buffer
 extern long lBigBufSize; //total number of samples
 
 //w1
-void transmittingMenu();
 void recordNew();
 void saveFront();
 void playFront();
 void deleteFront();
+void quit();
+void invalid();
 
-//w1
+//w2
 int selectStation();
 void receivingMenu();
+void transmittingMenu();
+void runModeLoop();

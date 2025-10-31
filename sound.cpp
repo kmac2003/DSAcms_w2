@@ -1,19 +1,18 @@
 /*
-
-================================== SECTION HEADER =====================================
+===================================================== SECTION HEADER =====================================================
 
 Program Name:   EECE72405-25F
 Author:			KIEN MACARTNEY
-Date:           OCT 15 2025
+Date:           OCT 30 2025
 Comments:		Projects III - Coded Messaging System
 
 				Sound implementation file
 
-=======================================================================================
-
+==========================================================================================================================
 */
 #pragma comment(lib, "Ws2_32.lib")	   // Make sure we are linking against the Ws2_32.lib library
 #pragma comment(lib, "Winmm.lib")      // Make sure we are linking against the Winmm.lib library - some functions/symbols from this library (Windows sound API) are used
+
 #include <stdio.h> 
 #include <windows.h>					// Contains WAVEFORMATEX structure
 #include <mmsystem.h>					

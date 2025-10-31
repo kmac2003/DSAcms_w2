@@ -9,14 +9,12 @@ Comments:		Projects III - Coded Messaging System
 
 				Receiver header file
 
-				*** Week 2 ***
-
-
-
 ==========================================================================================================================
 */
 #pragma once
+
 #include <Windows.h>
 
 void playText(HANDLE* hComRx);
 void Rx_goBack();
+void receiverLoop(HANDLE* hComRx);

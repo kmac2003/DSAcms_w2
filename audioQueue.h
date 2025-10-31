@@ -1,18 +1,17 @@
 /*
-
-================================== SECTION HEADER =====================================
+===================================================== SECTION HEADER =====================================================
 
 Program Name:   EECE72405-25F
-Author:         KIEN MACARTNEY
-Date:           OCT 15 2025
+Author:			KIEN MACARTNEY
+Date:           OCT 30 2025
 Comments:		Projects III - Coded Messaging System
 
-				Audio queue header file
+				Audio queue implementation file
 
-=======================================================================================
-
+==========================================================================================================================
 */
 #pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

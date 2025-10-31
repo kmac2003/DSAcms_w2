@@ -8,15 +8,15 @@ Comments:		Projects III - Coded Messaging System
 
 				RS232 cable header file
 
-				*** Week 2 ***
-
-
-
 ==========================================================================================================================
 */
 #pragma once
+
 #define BUFSIZE 140
 
+extern int nComRate;				// Baud (Bit) rate in bits/second 
+extern int nComBits;				// Number of bits per frame
+extern COMMTIMEOUTS timeout;		// A commtimeout struct variable
 
 // Prototype the functions to be used
 void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout);
@@ -29,3 +29,4 @@ void createPortFile(HANDLE* hCom, wchar_t* COMPORT);
 static int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS timeout);
 
 //w2
+HANDLE setupComPort(const wchar_t* portName, int nComRate, int nComBits, COMMTIMEOUTS timeout);

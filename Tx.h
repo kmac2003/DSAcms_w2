@@ -8,14 +8,12 @@ Comments:		Projects III - Coded Messaging System
 
 				Transmitting header file
 
-				*** Week 2 ***
-
-
-
 ==========================================================================================================================
 */
 #pragma once
+
 #include <Windows.h>
 
 void newText(HANDLE* hComTx);
 void Tx_goBack();
+void transmitterLoop(HANDLE* hComTx);

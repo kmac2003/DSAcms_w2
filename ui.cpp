@@ -8,22 +8,18 @@ Comments:		Projects III - Coded Messaging System
 
                 User interface implementation file
 
-                *** Week 2 ***
-
-
-
 ==========================================================================================================================
 */
-#include "ui.h"
-#include "audioQueue.h"
-#include "sound.h"
+#include <Windows.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <windows.h>
-
-
-
+#include <stdlib.h>
+#include "Tx.h"
+#include "Rx.h"
+#include "ui.h"
+#include "RS232Comm.h"
+#include "sound.h"
+#include "audioQueue.h"
 
 //w1
 //record a new message and enqueue it
@@ -80,6 +76,20 @@ void deleteFront(){
     free(deleted);
 }
 
+//program quit
+void quit() {
+    printf("\nQuitting program...\n");
+    Sleep(500);
+    exit(0);
+}
+
+//notify user of invalid input
+void invalid() {
+    printf("\nINVALID SELECTION\n");
+    Sleep(1000);
+    system("cls");
+}
+
 //w2
 //select whether the program functions as a transmitter or receiver
 int selectStation() {
@@ -117,5 +127,39 @@ void transmittingMenu() {
     printf("4. Open phonebook\n");
     printf("5. Back to menu");
     printf("\n===========================================================\n");
+}
+
+//runs the core Tx/Rx system
+void runModeLoop(){
+    HANDLE hComRx;			//pointer to receiver com port
+    HANDLE hComTx;			//pointer to transmitter com port
+    int running = TRUE;
+
+    while (running) {
+        int mode = selectStation(); //users decide if this is transmitter or receiver
+
+        switch (mode) {
+        case TRANSMITTER:
+            hComTx = setupComPort(L"COM6", nComRate, nComBits, timeout); //setup Tx port
+            transmitterLoop(&hComTx); //run transmitter menu loop
+            CloseHandle(hComTx);
+            purgePort(&hComTx);
+            break;
+
+        case RECEIVER:
+            hComRx = setupComPort(L"COM5", nComRate, nComBits, timeout); //setup Rx port
+            receiverLoop(&hComRx); //run receiver menu loop
+            CloseHandle(hComRx);
+            purgePort(&hComRx);
+            break;
+
+        case QUIT:
+            quit();
+            break;
+        default: //invalid
+            invalid();
+            continue;
+        }
+    }
 }
 

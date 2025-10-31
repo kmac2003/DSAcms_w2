@@ -8,20 +8,24 @@ Comments:		Projects III - Coded Messaging System
 
 				RS232 cable implementation file
 
-				*** Week 2 ***
-
-
-
 ==========================================================================================================================
 */
-#include <Windows.h>    // Includes the functions for serial communication via RS232
-#include <stdlib.h>
+#include <Windows.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include "Tx.h"
+#include "Rx.h"
+#include "ui.h"
 #include "RS232Comm.h"
+#include "sound.h"
+#include "audioQueue.h"
 
 #define EX_FATAL 1
 
+int nComRate = 9600;				// Baud (Bit) rate in bits/second 
+int nComBits = 8;					// Number of bits per frame
+COMMTIMEOUTS timeout = { 0 };		// A commtimeout struct variable
 
 // Initializes the port and sets the communication parameters
 void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) {
@@ -36,7 +40,7 @@ void purgePort(HANDLE* hCom) {
 	PurgeComm(*hCom, PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXABORT | PURGE_TXCLEAR);
 }
 
-// Output/Input messages to/from ports 
+//output messages to ports
 void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf) {
 	int i=0;
 	DWORD NumberofBytesTransmitted;
@@ -56,9 +60,10 @@ void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf) {
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.	
 	}
 	else
-		printf("\nSuccessful transmission, there were %ld bytes transmitted\n", NumberofBytesTransmitted);
+		printf("\nTRANSMISSION SUCCESS! %ld bytes transmitted\n", NumberofBytesTransmitted);
 }
 
+//input messages from ports
 DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) {
 	int i = 0;
 	DWORD NumberofBytesRead;
@@ -78,12 +83,10 @@ DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) {
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.
 	}
 	else
-		printf("\nSuccessful reception!, There were %ld bytes read\n", NumberofBytesRead);
+		printf("\nRECEPTION SUCCESS! %ld bytes read\n", NumberofBytesRead);
 
 	return(NumberofBytesRead);
 }
-
-
 
 // Sub functions called by above functions
 /**************************************************************************************/
@@ -131,5 +134,13 @@ static int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS ti
 	timeout.ReadTotalTimeoutConstant = 5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
 	SetCommTimeouts(*hCom, &timeout);
 	return(1);
+}
+
+//w2
+//handle setup function, likely will be reworked later to add chanegable port #
+HANDLE setupComPort(const wchar_t* portName, int nComRate, int nComBits, COMMTIMEOUTS timeout){
+	HANDLE hCom;
+	initPort(&hCom, (wchar_t*)portName, nComRate, nComBits, timeout);
+	return hCom;
 }
 
