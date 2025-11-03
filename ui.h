@@ -43,12 +43,13 @@ extern short iBigBuf[]; //global recording buffer
 extern long lBigBufSize; //total number of samples
 
 //w1
-void recordNew();
 void saveFront();
 void playFront();
 void deleteFront();
 void quit();
 void invalid();
+void goBack();
+void clearScreen();
 
 //w2
 int selectStation();

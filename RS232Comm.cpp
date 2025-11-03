@@ -59,32 +59,34 @@ void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf) {
 		printf("\nWrite Error: 0x%x\n", GetLastError());
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.	
 	}
-	else
+	else {
 		printf("\nTRANSMISSION SUCCESS! %ld bytes transmitted\n", NumberofBytesTransmitted);
+	}
 }
 
 //input messages from ports
 DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) {
-	int i = 0;
+	BOOL readSuccess;
 	DWORD NumberofBytesRead;
 	LPDWORD lpErrors = 0;
 	LPCOMSTAT lpStat = 0;
 
-	i = ReadFile(
-		*hCom,										// Read handle pointing to COM port
-		buf,										// Buffer size
-		szBuf,  									// Size of buffer - Maximum number of bytes to read
+	readSuccess = ReadFile(
+		*hCom,				// Read handle pointing to COM port
+		buf,				// Buffer size
+		szBuf,  			// Size of buffer - Maximum number of bytes to read
 		&NumberofBytesRead,
 		NULL
 	);
 	// Handle the timeout error
-	if (i == 0) {
+	if (!readSuccess) {
 		printf("\nRead Error: 0x%x\n", GetLastError());
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.
 	}
-	else
+	else if (NumberofBytesRead > 0) {
 		printf("\nRECEPTION SUCCESS! %ld bytes read\n", NumberofBytesRead);
-
+	}
+	//else: read succeeded but 0 bytes were read, so do nothing
 	return(NumberofBytesRead);
 }
 
@@ -105,11 +107,9 @@ void createPortFile(HANDLE* hCom, wchar_t* COMPORT) {
 	
 	if (*hCom == INVALID_HANDLE_VALUE) {
 		printf("\nFatal Error 0x%x: Unable to open\n", GetLastError());
-		Sleep(2000);
 	}
 	else {
 		printf("\nCOM is now open\n");
-		Sleep(2000);
 	}
 }
 
@@ -133,7 +133,7 @@ static int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS ti
 	memset((void *)&timeout, 0, sizeof(timeout));
 	timeout.ReadIntervalTimeout = 500;				// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
 	timeout.ReadTotalTimeoutMultiplier = 1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
-	timeout.ReadTotalTimeoutConstant = 5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
+	timeout.ReadTotalTimeoutConstant = 100;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
 	SetCommTimeouts(*hCom, &timeout);
 	return(1);
 }

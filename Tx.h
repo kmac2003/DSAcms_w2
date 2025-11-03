@@ -15,5 +15,5 @@ Comments:		Projects III - Coded Messaging System
 #include <Windows.h>
 
 void newText(HANDLE* hComTx);
-void Tx_goBack();
+void newAudio(HANDLE* hComTx);
 void transmitterLoop(HANDLE* hComTx);

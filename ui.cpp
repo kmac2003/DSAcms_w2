@@ -22,22 +22,6 @@ Comments:		Projects III - Coded Messaging System
 #include "audioQueue.h"
 
 //w1
-//record a new message and enqueue it
-void recordNew(){
-    char name[MAX_FILENAME];
-    printf("\nEnter a name for this recording: ");
-    scanf_s("%63s", name, (unsigned)_countof(name));
-    while (getchar() != '\n'); //flush input
-
-    RecordBuffer(iBigBuf, lBigBufSize);
-    CloseRecording();
-
-    printf("\nRecording complete. Adding message '%s' to queue...\n", name);
-    enqueue(iBigBuf, lBigBufSize, name);
-
-    //reopen recording device for the next recording
-    InitializeRecording();
-}
 
 //save the front message in the queue to file
 void saveFront(){
@@ -90,13 +74,25 @@ void invalid() {
     system("cls");
 }
 
+//notify user, delay and clear screen
+void goBack() {
+    printf("\nReturning to previous menu...\n");
+    Sleep(1000);
+    system("cls");
+}
+
+//delay and clear screen
+void clearScreen(){
+    Sleep(1500);
+    system("cls");
+}
+
 //w2
 //select whether the program functions as a transmitter or receiver
 int selectStation() {
-    system("cls");
     int mode;
     printf("====================================================\n");
-    printf("    CMS PROJECT - KIEN MATTHEW TROY\n");
+    printf("    4CMS PROJECT - KIEN MATTHEW TROY\n");
     printf("====================================================\n");
     printf("1 - Transmit\n");
     printf("2 - Receive\n");
@@ -112,7 +108,6 @@ int selectStation() {
 
 //print receiver menu
 void receivingMenu(){
-    system("cls");
     printf("\n============= RECEIVING STATION ================\n");
     printf("1. Play recent text message\n");
     printf("2. Play recent audio message\n");
@@ -122,7 +117,6 @@ void receivingMenu(){
 
 //print transmitter menu
 void transmittingMenu() {
-    system("cls");
     printf("\n============= TRANSMITTING STATION ================\n");
     printf("1. Write a new text message\n");
     printf("2. Record new audio message\n");
@@ -141,14 +135,14 @@ void runModeLoop(){
 
         switch (mode) {
         case TRANSMITTER:
-            hComTx = setupComPort(L"COM7", nComRate, nComBits, timeout); //setup Tx port
+            hComTx = setupComPort(L"COM5", nComRate, nComBits, timeout); //setup Tx port
             transmitterLoop(&hComTx); //run transmitter menu loop
             CloseHandle(hComTx);
             purgePort(&hComTx);
             break;
 
         case RECEIVER:
-            hComRx = setupComPort(L"COM8", nComRate, nComBits, timeout); //setup Rx port
+            hComRx = setupComPort(L"COM6", nComRate, nComBits, timeout); //setup Rx port
             receiverLoop(&hComRx); //run receiver menu loop
             CloseHandle(hComRx);
             purgePort(&hComRx);

@@ -16,5 +16,5 @@ Comments:		Projects III - Coded Messaging System
 #include <Windows.h>
 
 void playText(HANDLE* hComRx);
-void Rx_goBack();
+void playAudio(HANDLE* hComRx);
 void receiverLoop(HANDLE* hComRx);
