@@ -26,6 +26,8 @@ Comments:		Projects III - Coded Messaging System
 int nComRate = 9600;				// Baud (Bit) rate in bits/second 
 int nComBits = 8;					// Number of bits per frame
 COMMTIMEOUTS timeout = { 0 };		// A commtimeout struct variable
+wchar_t txPortName[10] = L"COM6";
+wchar_t rxPortName[10] = L"COM5";
 
 // Initializes the port and sets the communication parameters
 void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) {
@@ -145,4 +147,3 @@ HANDLE setupComPort(const wchar_t* portName, int nComRate, int nComBits, COMMTIM
 	initPort(&hCom, (wchar_t*)portName, nComRate, nComBits, timeout);
 	return hCom;
 }
-

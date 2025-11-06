@@ -56,6 +56,7 @@ void playText(HANDLE* hComRx){
 	}
 }
 
+//CURRENTLY BROKEN
 //receive and play audio message
 void playAudio(HANDLE* hComRx) {
 	system("cls");
@@ -101,15 +102,11 @@ void playAudio(HANDLE* hComRx) {
 
 //main transmitter branch loop
 void receiverLoop(HANDLE* hComRx){
-	int Rx_choice;
 	int running = TRUE;
 
 	while (running) {
 		receivingMenu();
-
-		printf("\nSelect an option: "); //collect user input
-		scanf_s("%d", &Rx_choice);
-		while (getchar() != '\n'); //flush extra input from 'enter'
+		int Rx_choice = getInput();
 
 		switch (Rx_choice) {
 		case PLAY_TEXT:
@@ -117,7 +114,7 @@ void receiverLoop(HANDLE* hComRx){
 			break;
 
 		case PLAY_AUDIO:
-			playAudio(hComRx);
+			//playAudio(hComRx);
 			break;
 
 		case Rx_GO_BACK:

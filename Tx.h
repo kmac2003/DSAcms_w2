@@ -16,4 +16,8 @@ Comments:		Projects III - Coded Messaging System
 
 void newText(HANDLE* hComTx);
 void newAudio(HANDLE* hComTx);
+void newTextOptions();
+void newAudioOptions();
+void listenToMsg();
+
 void transmitterLoop(HANDLE* hComTx);

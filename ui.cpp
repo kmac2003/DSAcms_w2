@@ -22,6 +22,24 @@ Comments:		Projects III - Coded Messaging System
 #include "audioQueue.h"
 
 //w1
+//record new audio and save it in the front of the queue
+void recordNew() {
+    system("cls");
+    char name[MAX_FILENAME];
+    printf("\nEnter a name for this recording: ");
+    scanf_s("%63s", name, (unsigned)_countof(name));
+    while (getchar() != '\n'); //flush input
+
+    RecordBuffer(iBigBuf, lBigBufSize);
+    CloseRecording();
+
+    printf("\nRecording complete!\n");
+    printf("Adding message '%s' to queue...\n", name);
+    enqueue(iBigBuf, lBigBufSize, name);
+
+    //reopen recording device for the next recording
+    InitializeRecording();
+}
 
 //save the front message in the queue to file
 void saveFront(){
@@ -60,6 +78,7 @@ void deleteFront(){
     free(deleted);
 }
 
+//**********************************************************************************    MENU QOL FUNCTIONS
 //program quit
 void quit() {
     printf("\nQuitting program...\n");
@@ -87,12 +106,35 @@ void clearScreen(){
     system("cls");
 }
 
+//collect choice from user
+int getInput() {
+    int value;
+    printf("Select an option: ");
+    scanf_s("%d", &value);
+    while (getchar() != '\n'); // flush the extra newline from input buffer
+    return value;
+}
+
+//w3
+//**********************************************************************************    SETTINGS FUNCTIONS
+//change the com port numbers
+void changeComPorts(wchar_t* txPortName, wchar_t* rxPortName) {
+    int txPortNum, rxPortNum;
+    printf("Enter new TX COM number: ");
+    scanf_s("%d", &txPortNum);
+    printf("Enter new RX COM number: ");
+    scanf_s("%d", &rxPortNum);
+    swprintf(txPortName, 10, L"COM%d", txPortNum);
+    swprintf(rxPortName, 10, L"COM%d", rxPortNum);
+}
+
 //w2
+//**********************************************************************************    PRINTF MENUS
 //select whether the program functions as a transmitter or receiver
 int selectStation() {
     int mode;
     printf("====================================================\n");
-    printf("    4CMS PROJECT - KIEN MATTHEW TROY\n");
+    printf("    CMS PROJECT - KIEN MATTHEW TROY\n");
     printf("====================================================\n");
     printf("1 - Transmit\n");
     printf("2 - Receive\n");
@@ -106,7 +148,7 @@ int selectStation() {
     return mode;
 }
 
-//print receiver menu
+//selects what kind of message user wishes to receive
 void receivingMenu(){
     printf("\n============= RECEIVING STATION ================\n");
     printf("1. Play recent text message\n");
@@ -115,7 +157,7 @@ void receivingMenu(){
     printf("\n===========================================================\n");
 }
 
-//print transmitter menu
+//selects what kind of message user wishes to send
 void transmittingMenu() {
     printf("\n============= TRANSMITTING STATION ================\n");
     printf("1. Write a new text message\n");
@@ -124,6 +166,29 @@ void transmittingMenu() {
     printf("\n===========================================================\n");
 }
 
+//displays options once audio message is recorded
+void newAudioSubMenu() {
+    printf("\n============= AUDIO MESSAGE OPTIONS ================\n");
+    printf("1. Compress audio\n");
+    printf("2. Encrypt audio\n");
+    printf("3. Add audio message info\n");
+    printf("4. Delete\n");
+    printf("5. Send");
+    printf("\n===========================================================\n");
+}
+
+//displays options once text message is recorded
+void newTextSubMenu() {
+    printf("\n============= TEXT MESSAGE OPTIONS ================\n");
+    printf("1. Compress text\n");
+    printf("2. Encrypt text\n");
+    printf("3. Add text message info\n");
+    printf("4. Delete\n");
+    printf("5. Send");
+    printf("\n===========================================================\n");
+}
+
+//**********************************************************************************    CORE LOOP
 //runs the core Tx/Rx system
 void runModeLoop(){
     HANDLE hComRx;			//pointer to receiver com port
@@ -161,6 +226,8 @@ void runModeLoop(){
         case SETTINGS:
             system("cls");
             printf("settings\n");
+            changeComPorts(txPortName, rxPortName);
+            //printf("Current COM ports: TX=COM%d, RX=COM%d\n", txPortNum, rxPortNum);
             break;
 
         case QUIT:

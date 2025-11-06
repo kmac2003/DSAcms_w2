@@ -57,6 +57,7 @@ void newText(HANDLE* hComTx){
 	}
 }
 
+//CURRENTLY BROKEN
 //creates and sends new audio message
 void newAudio(HANDLE* hComTx){
 	char name[MAX_FILENAME];
@@ -88,17 +89,94 @@ void newAudio(HANDLE* hComTx){
 	InitializeRecording();
 }
 
+//TEXT: if user wishes to compress, encrypt or send message
+void newTextOptions(){
+	while (sending) {
+		newTextSubMenu();
+		int msgOption = getInput();
+
+		switch (msgOption) {
+		case COMPRESS_TEXT:
+			printf("compressing...\n");
+			break;
+		case ENCRYPT_TEXT:
+			printf("encrpyting...\n");
+			break;
+		case ADD_INFO_TEXT:
+			printf("adding information regarding text message...\n");
+			break;
+		case Tx_DELETE_TEXT:
+			printf("deleting audio message...\n");
+			break;
+		case SEND_TEXT:
+			printf("sending message...\n");
+			break;
+		default:
+			invalid();
+			break;
+		}
+	}
+}
+
+//AUDIO: if user wishes to compress, encrypt, delete or send message
+void newAudioOptions() {
+	while (sending) {
+		newAudioSubMenu();
+		int msgOption = getInput();
+
+		switch (msgOption) {
+		case COMPRESS_AUDIO:
+			printf("compressing...\n");
+			break;
+		case ENCRYPT_AUDIO:
+			printf("encrpyting...\n");
+			break;
+		case ADD_INFO_AUDIO:
+			printf("adding information regarding audio message...\n");
+			break;
+		case Tx_DELETE_AUDIO:
+			printf("deleting audio message...\n");
+			break;
+		case SEND_AUDIO:
+			printf("sending message...\n");
+			break;
+		default:
+			invalid();
+			break;
+		}
+	}
+}
+
+//asks the user if they'd like to listen to the msg they just recorded
+void listenToMsg(){
+	char ch;
+	printf("\nWould you like to listen to your recording? (y / n)\n");
+	while (sending) {
+		if (_kbhit()) {          // Check if a key has been pressed
+			ch = _getch();       // Get the character without waiting for Enter
+			if (ch == 'y' || ch == 'Y') {
+				playFront(); //play message and then go to audio sub menu
+				break;
+			}
+			else if (ch == 'n' || ch == 'N') {
+				//user hit no, skip to audio sub menu
+				break;
+			}
+			else {
+				printf("\nInvalid key '%c'. Press 'y' or 'n'.\n", ch);
+			}
+		}
+	}
+}
+
 //main transmitter branch loop
 void transmitterLoop(HANDLE* hComTx){
-	int Tx_choice;
 	int running = TRUE;
 
 	while (running) {
+		system("cls");
 		transmittingMenu(); //Tx print menu
-
-		printf("\nSelect an option: "); //collect user input
-		scanf_s("%d", &Tx_choice);
-		while (getchar() != '\n'); //flush extra input from 'enter'
+		int Tx_choice = getInput();
 
 		switch (Tx_choice) {
 		case NEW_TEXT:
@@ -106,7 +184,10 @@ void transmitterLoop(HANDLE* hComTx){
 			break;
 
 		case NEW_AUDIO:
-			newAudio(hComTx);
+			recordNew(); //function from w1
+			listenToMsg();
+			newAudioOptions();
+			//newAudio(hComTx);
 			break;
 
 		case Tx_GO_BACK:

@@ -17,4 +17,5 @@ Comments:		Projects III - Coded Messaging System
 
 void playText(HANDLE* hComRx);
 void playAudio(HANDLE* hComRx);
+
 void receiverLoop(HANDLE* hComRx);

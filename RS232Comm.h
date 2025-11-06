@@ -17,6 +17,8 @@ Comments:		Projects III - Coded Messaging System
 extern int nComRate;				// Baud (Bit) rate in bits/second 
 extern int nComBits;				// Number of bits per frame
 extern COMMTIMEOUTS timeout;		// A commtimeout struct variable
+extern wchar_t txPortName[];
+extern wchar_t rxPortName[];
 
 // Prototype the functions to be used
 void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout);
