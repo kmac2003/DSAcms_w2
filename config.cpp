@@ -42,12 +42,12 @@ void saveComPorts(int TxPort, int RxPort){
 void loadComPorts(int* TxPort, int* RxPort){
 	FILE* file = fopen(CONFIG_FILE, "r");
 	if (file) {
-		fscanf(file, "%d %d", TxPort, RxPort);
+		fscanf_s(file, "%d %d", TxPort, RxPort);
 		fclose(file);
 		printf("Loaded COM ports: Tx = COM%d, Rx = COM%d\n", *TxPort, *RxPort);
 	}
 	else {
-		//default values
+		//default values for Kien's computer
 		*TxPort = 6;
 		*RxPort = 5;
 		printf("No config file found, using defaults (Tx = COM6, Rx = COM5)\n");

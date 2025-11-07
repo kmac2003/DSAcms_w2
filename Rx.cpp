@@ -37,6 +37,7 @@ void playText(HANDLE* hComRx){
 	printf("\nListening for incoming text messages...\n");
 	printf("Press 'q' to stop listening\n\n");
 
+	listening = TRUE;
 	while (listening) { //check if user wants to stop listening
 		if (_kbhit()) { //scan for the letter q, if pressed flag user and return to Rx menu
 			char ch = _getch();
@@ -104,7 +105,6 @@ void playAudio(HANDLE* hComRx) {
 //main transmitter branch loop
 void receiverLoop(HANDLE* hComRx){
 	int running = TRUE;
-
 	while (running) {
 		receivingMenu();
 		int Rx_choice = getInput();

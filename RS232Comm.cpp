@@ -20,6 +20,7 @@ Comments:		Projects III - Coded Messaging System
 #include "RS232Comm.h"
 #include "sound.h"
 #include "audioQueue.h"
+#include "config.h"
 
 #define EX_FATAL 1
 

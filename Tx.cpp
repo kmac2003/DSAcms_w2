@@ -26,7 +26,9 @@ Comments:		Projects III - Coded Messaging System
 //variables
 char msgOut[BUFSIZE];
 size_t len;
-BOOL sending = TRUE;
+int transmitting = TRUE;
+int sendingNewText = TRUE;
+int advancedMenu = TRUE;
 
 //creates and sends new text messages
 void newText(HANDLE* hComTx){
@@ -34,7 +36,8 @@ void newText(HANDLE* hComTx){
 	printf("\nType your messages below...\n");
 	printf("Enter 'q' to stop sending\n");
 
-	while (sending) { 
+	transmitting = TRUE;
+	while (transmitting) {
 		//collect string from the user
 		printf("\nEnter message:\n");
 		fgets(msgOut, sizeof(msgOut), stdin); 
@@ -47,7 +50,7 @@ void newText(HANDLE* hComTx){
 		}
 		//check for quit command
 		if (_stricmp(msgOut, "q") == 0) { //if user quits return to Tx menu
-			sending = FALSE;
+			transmitting = FALSE;
 			printf("\nStopped sending\n");
 			clearScreen();
 			break;
@@ -90,28 +93,71 @@ void newAudio(HANDLE* hComTx){
 	InitializeRecording();
 }
 
-//TEXT: if user wishes to compress, encrypt or send message
-void newTextOptions(){
-	while (sending) {
-		newTextSubMenu();
-		int msgOption = getInput();
+//ask if user wishes to send instant or advanced text message
+void selectTextType(HANDLE* hComTx) {
+	system("cls");
+	sendingNewText = TRUE;
 
-		switch (msgOption) {
+	while (sendingNewText) {
+		newTextTypeMenu();
+		int textType = getInput();
+
+		switch (textType) {
+		case INSTANT:
+			newText(hComTx); //create and send new text messages
+			break;
+
+		case ADVANCED:
+			newTextAdvanced();
+			break;
+
+		case Tx_SUB_GO_BACK:
+			goBack();
+			sendingNewText = FALSE;
+			break;
+
+		default:
+			invalid();
+			break;
+		}
+	}
+}
+
+//TEXT: if user wishes to compress, encrypt or send message
+void newTextAdvanced(){
+	system("cls");
+
+	advancedMenu = TRUE;
+	while (advancedMenu) {
+		newTextAdvancedMenu();
+		int textAdvanced = getInput();
+
+		switch (textAdvanced) {
 		case COMPRESS_TEXT:
 			printf("compressing...\n");
 			break;
+
 		case ENCRYPT_TEXT:
-			printf("encrpyting...\n");
+			printf("encrypting...\n");
 			break;
+
 		case ADD_INFO_TEXT:
-			printf("adding information regarding text message...\n");
+			printf("adding info...\n");
 			break;
-		case Tx_DELETE_TEXT:
-			printf("deleting audio message...\n");
+
+		case DELETE_TEXT:
+			printf("deleting...\n");
 			break;
+
 		case SEND_TEXT:
-			printf("sending message...\n");
+			printf("sending...\n");
 			break;
+
+		case GO_BACK_TEXT:
+			goBack();
+			advancedMenu = FALSE;
+			break;
+
 		default:
 			invalid();
 			break;
@@ -121,7 +167,8 @@ void newTextOptions(){
 
 //AUDIO: if user wishes to compress, encrypt, delete or send message
 void newAudioOptions() {
-	while (sending) {
+	transmitting = TRUE;
+	while (transmitting) {
 		newAudioSubMenu();
 		int msgOption = getInput();
 
@@ -151,8 +198,9 @@ void newAudioOptions() {
 //asks the user if they'd like to listen to the msg they just recorded
 void listenToMsg(){
 	char ch;
+	transmitting = TRUE;
 	printf("\nWould you like to listen to your recording? (y / n)\n");
-	while (sending) {
+	while (transmitting) {
 		if (_kbhit()) {          // Check if a key has been pressed
 			ch = _getch();       // Get the character without waiting for Enter
 			if (ch == 'y' || ch == 'Y') {
@@ -168,20 +216,19 @@ void listenToMsg(){
 			}
 		}
 	}
+	system("cls");
 }
 
 //main transmitter branch loop
 void transmitterLoop(HANDLE* hComTx){
-	int running = TRUE;
-
-	while (running) {
-		//system("cls");
+	transmitting = TRUE;
+	while (transmitting) {
 		transmittingMenu(); //Tx print menu
 		int Tx_choice = getInput();
 
 		switch (Tx_choice) {
 		case NEW_TEXT:
-			newText(hComTx); //create and send new text messages
+			selectTextType(hComTx);
 			break;
 
 		case NEW_AUDIO:
@@ -193,7 +240,7 @@ void transmitterLoop(HANDLE* hComTx){
 
 		case Tx_GO_BACK:
 			goBack();
-			running = FALSE;
+			transmitting = FALSE;
 			break;
 
 		default:
