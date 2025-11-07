@@ -20,6 +20,7 @@ Comments:		Projects III - Coded Messaging System
 #include "RS232Comm.h"
 #include "sound.h"
 #include "audioQueue.h"
+#include "config.h"
 
 //w1
 //record new audio and save it in the front of the queue
@@ -117,16 +118,7 @@ int getInput() {
 
 //w3
 //**********************************************************************************    SETTINGS FUNCTIONS
-//change the com port numbers
-void changeComPorts(wchar_t* txPortName, wchar_t* rxPortName) {
-    int txPortNum, rxPortNum;
-    printf("Enter new TX COM number: ");
-    scanf_s("%d", &txPortNum);
-    printf("Enter new RX COM number: ");
-    scanf_s("%d", &rxPortNum);
-    swprintf(txPortName, 10, L"COM%d", txPortNum);
-    swprintf(rxPortName, 10, L"COM%d", rxPortNum);
-}
+
 
 //w2
 //**********************************************************************************    PRINTF MENUS
@@ -194,20 +186,30 @@ void runModeLoop(){
     HANDLE hComRx;			//pointer to receiver com port
     HANDLE hComTx;			//pointer to transmitter com port
     int running = TRUE;
+    int txPortNum;
+    int rxPortNum;
+    wchar_t txPortName[10];
+    wchar_t rxPortName[10];
+
+    //init com ports
+    loadComPorts(&txPortNum, &rxPortNum);
 
     while (running) {
+        swprintf(txPortName, 10, L"COM%d", txPortNum);
+        swprintf(rxPortName, 10, L"COM%d", rxPortNum);
+
         int mode = selectStation(); //users decide if this is transmitter or receiver
 
         switch (mode) {
         case TRANSMITTER:
-            hComTx = setupComPort(L"COM5", nComRate, nComBits, timeout); //setup Tx port
+            hComTx = setupComPort(txPortName, nComRate, nComBits, timeout); //setup Tx port
             transmitterLoop(&hComTx); //run transmitter menu loop
             CloseHandle(hComTx);
             purgePort(&hComTx);
             break;
 
         case RECEIVER:
-            hComRx = setupComPort(L"COM6", nComRate, nComBits, timeout); //setup Rx port
+            hComRx = setupComPort(rxPortName, nComRate, nComBits, timeout); //setup Rx port
             receiverLoop(&hComRx); //run receiver menu loop
             CloseHandle(hComRx);
             purgePort(&hComRx);
@@ -225,9 +227,12 @@ void runModeLoop(){
 
         case SETTINGS:
             system("cls");
-            printf("settings\n");
-            changeComPorts(txPortName, rxPortName);
-            //printf("Current COM ports: TX=COM%d, RX=COM%d\n", txPortNum, rxPortNum);
+            printf("Current COM ports: Tx = COM%d, Rx = COM%d\n", txPortNum, rxPortNum);
+            printf("Enter new Transmitter COM number: ");
+            scanf_s("%d", &txPortNum);
+            printf("Enter new Receiver COM number: ");
+            scanf_s("%d", &rxPortNum);
+            saveComPorts(txPortNum, rxPortNum);
             break;
 
         case QUIT:

@@ -69,7 +69,6 @@ void clearScreen();
 int getInput();
 
 //w3
-void changeComPorts(wchar_t* txPortName, wchar_t* rxPortName);
 
 //w2
 int selectStation();

@@ -21,6 +21,7 @@ Comments:		Projects III - Coded Messaging System
 #include "RS232Comm.h"
 #include "sound.h"
 #include "audioQueue.h"
+#include "config.h"
 
 //variables
 char msgOut[BUFSIZE];
@@ -174,7 +175,7 @@ void transmitterLoop(HANDLE* hComTx){
 	int running = TRUE;
 
 	while (running) {
-		system("cls");
+		//system("cls");
 		transmittingMenu(); //Tx print menu
 		int Tx_choice = getInput();
 
