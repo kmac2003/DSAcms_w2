@@ -20,6 +20,8 @@ Comments:		Projects III - Coded Messaging System
 				- COM port number customization
 						COM port numbers are displayed on top level menu, numbers are stored in a config file, users can
 						change these numbers in Settings
+				- Encrypt and decrypt testing
+						XOR encrypt and decrypt functions were written and added to the testing switch case
 				- More menus and sub-menus were written
 
 ==========================================================================================================================
