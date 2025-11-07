@@ -20,5 +20,9 @@ void selectTextType(HANDLE* hComTx);
 void newTextAdvanced();
 void newAudioOptions();
 void listenToMsg();
-
+//encrypt and decrypt
+void testXorEncryption(HANDLE* hComTx);
+void xorEncrypt(const char* input, char* output, char key);
+void xorDecrypt(const char* input, char* output, char key);
+//main transmitter loop
 void transmitterLoop(HANDLE* hComTx);

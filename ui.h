@@ -67,6 +67,18 @@ enum SETTINGS {
 	Set_GO_BACK = 2
 };
 
+//testing
+enum TESTING {
+	VALIDATE_HARDWARE = 1,
+	LOOPBACK = 2,
+	CONSTRUCT_HEADER = 3,
+	SORTING_QUEUE = 4,
+	ERROR_DETECT = 5,
+	ENCRYPT_DECRPYT = 6,
+	COMPRESS_DECOMPRESS = 7,
+	BACK_TESTING = 8
+};
+
 //w1
 extern short iBigBuf[]; //global recording buffer
 extern long lBigBufSize; //total number of samples
@@ -85,6 +97,7 @@ int getInput();
 //w3
 void configureComPorts(int* txPortNum, int* rxPortNum);
 void settingsLoop();
+void testingLoop();
 
 //w2
 //main menu
@@ -98,5 +111,7 @@ void newTextTypeMenu();
 void newTextAdvancedMenu();
 //settings
 void settingsMenu();
+//testing
+void testingMenu();
 //main loop
 void runModeLoop();

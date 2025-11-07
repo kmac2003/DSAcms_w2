@@ -25,6 +25,8 @@ Comments:		Projects III - Coded Messaging System
 int running = TRUE;
 int txPortNum;
 int rxPortNum;
+HANDLE hComRx;			//pointer to receiver com port
+HANDLE hComTx;			//pointer to transmitter com port
 
 //w1
 //record new audio and save it in the front of the queue
@@ -150,9 +152,9 @@ void settingsLoop() {
 
     while (inSettings) {
         settingsMenu();
-        int option = getInput(); //collect setting choice
+        int setOption = getInput(); //collect setting choice
 
-        switch (option) {
+        switch (setOption) {
         case CONFIG_COM:
             configureComPorts(&txPortNum, &rxPortNum);
             break;
@@ -161,6 +163,52 @@ void settingsLoop() {
             goBack();
             inSettings = FALSE;
             //return to main menu
+            break;
+
+        default:
+            invalid();
+            break;
+        }
+    }
+}
+
+//**********************************************************************************    TESTING FUNCTIONS
+//switch case for all testing functions
+void testingLoop(){
+    system("cls");
+
+    int inTesting = TRUE;
+    while (inTesting) {
+
+        testingMenu();
+        int testOption = getInput();
+
+        switch (testOption) {
+        case VALIDATE_HARDWARE:
+            break;
+
+        case LOOPBACK:
+            break;
+
+        case CONSTRUCT_HEADER:
+            break;
+
+        case SORTING_QUEUE:
+            break;
+
+        case ERROR_DETECT:
+            break;
+
+        case ENCRYPT_DECRPYT:
+            testXorEncryption(&hComTx);
+            break;
+
+        case COMPRESS_DECOMPRESS:
+            break;
+
+        case BACK_TESTING:
+            goBack();
+            inTesting = FALSE;
             break;
 
         default:
@@ -239,7 +287,7 @@ void newTextAdvancedMenu() {
     printf("\n===========================================================\n");
 }
 
-//**********************************************************************************    SETTINGS MENUS
+//**********************************************************************************    SETTINGS MENU
 //diplays setting choices
 void settingsMenu() {
     printf("\n============= SETTINGS ================\n");
@@ -248,11 +296,25 @@ void settingsMenu() {
     printf("\n===========================================\n\n");
 }
 
+//**********************************************************************************    TESTING MENU
+//displays testing cases
+void testingMenu() {
+    printf("\n============= TESTING ================\n");
+    printf("1. Validate hardware\n");
+    printf("2. Loopback\n");
+    printf("3. Construct header\n");
+    printf("4. Sorting queue\n");
+    printf("5. Error detection\n");
+    printf("6. Encrypt / decrypt\n");
+    printf("7. Compress / decompress\n");
+    printf("8. Back");
+    printf("\n===========================================================\n");
+}
+
 //**********************************************************************************    CORE LOOP
 //runs the core Tx/Rx system
 void runModeLoop(){
-    HANDLE hComRx;			//pointer to receiver com port
-    HANDLE hComTx;			//pointer to transmitter com port
+    
     wchar_t txPortName[10];
     wchar_t rxPortName[10];
 
@@ -281,8 +343,7 @@ void runModeLoop(){
             break;
 
         case TESTING:
-            system("cls");
-            printf("testing\n");
+            testingLoop();
             break;
 
         case PHONEBOOK:

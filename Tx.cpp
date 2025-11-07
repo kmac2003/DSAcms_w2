@@ -29,6 +29,7 @@ size_t len;
 int transmitting = TRUE;
 int sendingNewText = TRUE;
 int advancedMenu = TRUE;
+int audioMsg = TRUE;
 
 //creates and sends new text messages
 void newText(HANDLE* hComTx){
@@ -167,8 +168,8 @@ void newTextAdvanced(){
 
 //AUDIO: if user wishes to compress, encrypt, delete or send message
 void newAudioOptions() {
-	transmitting = TRUE;
-	while (transmitting) {
+	audioMsg = TRUE;
+	while (audioMsg) {
 		newAudioSubMenu();
 		int msgOption = getInput();
 
@@ -215,6 +216,76 @@ void listenToMsg(){
 				printf("\nInvalid key '%c'. Press 'y' or 'n'.\n", ch);
 			}
 		}
+	}
+	system("cls");
+}
+
+//**********************************************************************************    ENCRYPT / DECRPYT
+//xor encrpyt
+void xorEncrypt(const char* input, char* output, char key) {
+	int i = 0;
+	while (input[i] != '\0') {
+		output[i] = input[i] ^ key;
+		i++;
+	}
+	output[i] = '\0';
+}
+
+//xor decrpyt
+void xorDecrypt(const char* input, char* output, char key) {
+	int i = 0;
+	while (input[i] != '\0') {
+		output[i] = input[i] ^ key; // same as encode
+		i++;
+	}
+	output[i] = '\0';
+}
+
+//strip enter
+static void strip_newline(char* s) {
+	size_t n = strlen(s);
+	if (n > 0 && s[n - 1] == '\n') s[n - 1] = '\0';
+}
+
+// test function
+void testXorEncryption(HANDLE* hComTx) {
+	char input[256];
+	char encoded[256];
+	char decoded[256];
+	char choice[8];
+	char key;
+
+	printf("Enter a character key for XOR encryption: ");
+	scanf_s(" %c", &key);
+	getchar(); // consume leftover newline
+
+	printf("\nEnter text to encrypt: ");
+	if (!fgets(input, sizeof(input), stdin)) {
+		printf("Input error.\n");
+		return;
+	}
+	strip_newline(input);
+
+	xorEncrypt(input, encoded, key);
+
+	printf("\nEncrypted text (raw XOR bytes):\n");
+	for (size_t i = 0; i < strlen(encoded); i++) {
+		printf("%02X ", (unsigned char)encoded[i]);
+	}
+	printf("\n");
+
+	// send to COM port
+	outputToPort(hComTx, encoded, strlen(encoded));
+
+	printf("\nWould you like to decrypt and display it? (y/n): ");
+	if (!fgets(choice, sizeof(choice), stdin)) return;
+
+	if (tolower(choice[0]) == 'y') {
+		xorDecrypt(encoded, decoded, key);
+		printf("\nDecrypted text:\n%s\n", decoded);
+	}
+	else {
+		printf("Done. Encrypted data sent to COM port.\n");
 	}
 	system("cls");
 }
