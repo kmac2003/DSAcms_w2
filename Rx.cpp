@@ -26,11 +26,9 @@ Comments:		Projects III - Coded Messaging System
 //variables
 char msgIn[BUFSIZE];
 BOOL listening = TRUE;
-BOOL receivingAudio = FALSE;
 DWORD bytesRead = 0;
-DWORD totalBytes = 0;
-const DWORD maxAudioBytes = (DWORD)(lBigBufSize * sizeof(short)); //safe byte limit
 
+//**********************************************************************************    RECEIVING TEXTS
 //continuously receives and displays new text messages until user decides to stop
 void playText(HANDLE* hComRx){
 	system("cls");
@@ -58,48 +56,42 @@ void playText(HANDLE* hComRx){
 	}
 }
 
-//CURRENTLY BROKEN
-//receive and play audio message
-void playAudio(HANDLE* hComRx) {
-	system("cls");
-	printf("\nListening for incoming audio messages...\n");
+//**********************************************************************************    RECEIVING AUDIO
+void receiveAudioAndPlay(HANDLE* hComRx) {
+	Header rxHeader;
+	void* rxPayload = NULL;   // this will be allocated inside receive()
+	DWORD bytesRead;
 
-	while (listening) {
-		bytesRead = inputFromPort(hComRx, msgIn, sizeof(msgIn) - 1);
-		if (bytesRead == 0) {
-			Sleep(50);
-			continue; //no data yet
-		}
-		msgIn[bytesRead] = '\0';
+	printf("Waiting for audio transmission...\n");
 
-		//detect start of audio message
-		if (!receivingAudio && strstr(msgIn, "[AUDIO_START]")) {
-			printf("\nAudio start detected!\n");
-			receivingAudio = TRUE;
-			totalBytes = 0;
-			continue;
-		}
-		//detect end of audio message
-		if (receivingAudio && strstr(msgIn, "[AUDIO_END]")) {
-			printf("\nAudio end detected! Total bytes: %ld\n", (unsigned long)totalBytes);
-			PlayBuffer(iBigBuf, totalBytes / sizeof(short));
-			printf("\nPlayback complete\n");
-			break;
-		}
-
-		if (receivingAudio) {
-			// Be careful not to overflow buffer
-			if (totalBytes + bytesRead <= maxAudioBytes) {
-				memcpy((char*)iBigBuf + totalBytes, msgIn, bytesRead);
-				totalBytes += bytesRead;
-			}
-			else {
-				printf("Warning: audio buffer full! Stopping.\n");
-				receivingAudio = FALSE;
-				break;
-			}
-		}
+	// Receive header + payload
+	bytesRead = receive(&rxHeader, &rxPayload, hComRx);
+	if (bytesRead == 0 || rxPayload == NULL) {
+		printf("Error: no data received.\n");
+		return;
 	}
+
+	printf("Received payload: %ld bytes (type '%c')\n", rxHeader.payloadSize, rxHeader.payLoadType);
+
+	// --- CAST BUFFER BACK TO AUDIO FORMAT ---
+	short* audioBuffer = (short*)rxPayload;  // convert from void* to short*
+	long numSamples = rxHeader.payloadSize / sizeof(short);
+
+	// Play the received audio
+	if (!InitializePlayback()) {
+		printf("Playback initialization failed.\n");
+		free(rxPayload);
+		return;
+	}
+
+	printf("Playing received audio (%ld samples)...\n", numSamples);
+	PlayBuffer(audioBuffer, numSamples);
+	ClosePlayback();
+
+	// Free the malloc'd buffer
+	free(rxPayload);
+
+	printf("Audio playback complete.\n");
 }
 
 //main transmitter branch loop
@@ -115,7 +107,7 @@ void receiverLoop(HANDLE* hComRx){
 			break;
 
 		case PLAY_AUDIO:
-			//playAudio(hComRx);
+			receiveAudioAndPlay(hComRx);
 			break;
 
 		case Rx_GO_BACK:

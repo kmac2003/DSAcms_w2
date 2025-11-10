@@ -21,6 +21,10 @@ Comments:		Projects III - Coded Messaging System
 #define SAMPLES_SEC			8000	// number of samples per second
 #define	NFREQUENCIES		96		// number of frequencies used - leave this alone
 
+//w1
+extern short iBigBuf[]; //global recording buffer
+extern long lBigBufSize; //total number of samples
+
 // FUNCTION PROTOTYPES
 // 
 // Playback

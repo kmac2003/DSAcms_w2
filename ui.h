@@ -80,10 +80,6 @@ enum TESTING {
 };
 
 //w1
-extern short iBigBuf[]; //global recording buffer
-extern long lBigBufSize; //total number of samples
-
-//w1
 void recordNew();
 void saveFront();
 void playFront();

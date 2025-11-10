@@ -318,10 +318,10 @@ void runModeLoop(){
     wchar_t txPortName[10];
     wchar_t rxPortName[10];
 
-    //init com ports
-    loadComPorts(&txPortNum, &rxPortNum);
-
     while (running) {
+        //init com ports
+        loadComPorts(&txPortNum, &rxPortNum);
+
         swprintf(txPortName, 10, L"COM%d", txPortNum); //formats PortNum into L"COM#"
         swprintf(rxPortName, 10, L"COM%d", rxPortNum);
 

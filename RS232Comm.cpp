@@ -23,10 +23,45 @@ Comments:		Projects III - Coded Messaging System
 #include "config.h"
 
 #define EX_FATAL 1
-
-int nComRate = 9600;				// Baud (Bit) rate in bits/second 
+#define CHUNK_SIZE 512
+ 
+int nComRate = 460800;				// Baud (Bit) rate in bits/second 
 int nComBits = 8;					// Number of bits per frame
 COMMTIMEOUTS timeout = { 0 };		// A commtimeout struct variable
+char selection;													// Tx or Rx (can run two instances of this program - double click the exe file)
+Header txHeader;												// Header transmitted 
+Header rxHeader;												// Header received
+void* rxPayload = NULL;											// Received payload (buffer) - void so it can be any data type
+
+//transmits header and payload
+void transmit(Header* txHeader, void* txPayload, HANDLE* hCom) {
+	// Send header
+	outputToPort(hCom, txHeader, sizeof(Header));
+	// Send payload
+	outputToPort(hCom, txPayload, txHeader->payloadSize);
+	//delay to ensure transmission completes
+	Sleep(500);
+	purgePort(hCom); //flush port buffer
+	printf("\nTransmission complete.\n");
+}
+
+//receives header and payload
+DWORD receive(Header* rxHeader, void** rxPayload, HANDLE* hCom) {
+	DWORD bytesRead;
+	inputFromPort(hCom, rxHeader, sizeof(Header)); //read header first
+
+	// Allocate space for payload
+	*rxPayload = malloc(rxHeader->payloadSize);
+	if (*rxPayload == NULL) {
+		printf("Error: failed to allocate %ld bytes.\n", rxHeader->payloadSize);
+		return 0;
+	}
+	// Read payload
+	bytesRead = inputFromPort(hCom, *rxPayload, rxHeader->payloadSize);
+	purgePort(hCom); //flush port buffers
+
+	return bytesRead;
+}
 
 // Initializes the port and sets the communication parameters
 void initPort(HANDLE* hCom, wchar_t* COMPORT, int nComRate, int nComBits, COMMTIMEOUTS timeout) {
@@ -134,7 +169,7 @@ static int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS ti
 	memset((void *)&timeout, 0, sizeof(timeout));
 	timeout.ReadIntervalTimeout = 500;				// Maximum time allowed to elapse before arival of next byte in milliseconds. If the interval between the arrival of any two bytes exceeds this amount, the ReadFile operation is completed and buffered data is returned
 	timeout.ReadTotalTimeoutMultiplier = 1;			// The multiplier used to calculate the total time-out period for read operations in milliseconds. For each read operation this value is multiplied by the requested number of bytes to be read
-	timeout.ReadTotalTimeoutConstant = 100;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
+	timeout.ReadTotalTimeoutConstant = 5000;		// A constant added to the calculation of the total time-out period. This constant is added to the resulting product of the ReadTotalTimeoutMultiplier and the number of bytes (above).
 	SetCommTimeouts(*hCom, &timeout);
 	return(1);
 }

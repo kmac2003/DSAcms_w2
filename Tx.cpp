@@ -23,6 +23,7 @@ Comments:		Projects III - Coded Messaging System
 #include "audioQueue.h"
 #include "config.h"
 
+
 //variables
 char msgOut[BUFSIZE];
 size_t len;
@@ -31,6 +32,7 @@ int sendingNewText = TRUE;
 int advancedMenu = TRUE;
 int audioMsg = TRUE;
 
+//**********************************************************************************    SENDING TEXTS
 //creates and sends new text messages
 void newText(HANDLE* hComTx){
 	system("cls");
@@ -60,38 +62,6 @@ void newText(HANDLE* hComTx){
 		outputToPort(hComTx, msgOut, strlen(msgOut) + 1);
 		//printf("Message sent: %s\n", msgOut);
 	}
-}
-
-//CURRENTLY BROKEN
-//creates and sends new audio message
-void newAudio(HANDLE* hComTx){
-	char name[MAX_FILENAME];
-	printf("\nEnter a name for this recording: ");
-	scanf_s("%63s", name, (unsigned)_countof(name));
-	while (getchar() != '\n'); //flush input
-
-	RecordBuffer(iBigBuf, lBigBufSize);
-	CloseRecording();
-	printf("\nRecording complete\n");
-	
-	//send a start tag
-	const char* header = "[AUDIO_START]";
-	outputToPort(hComTx, (LPCVOID)header, (DWORD)strlen(header));
-	Sleep(100);
-
-	//send actual audio bytes
-	DWORD audioBytes = (DWORD)(lBigBufSize * sizeof(short));
-	outputToPort(hComTx, (LPCVOID)iBigBuf, audioBytes);
-	Sleep(100);
-
-	//send an end tag
-	const char* footer = "[AUDIO_END]";
-	outputToPort(hComTx, (LPCVOID)footer, (DWORD)strlen(footer));
-
-	printf("%s sent successfully! Total bytes: %ld\n", name, lBigBufSize);
-
-	//reopen recording device for the next recording
-	InitializeRecording();
 }
 
 //ask if user wishes to send instant or advanced text message
@@ -164,6 +134,37 @@ void newTextAdvanced(){
 			break;
 		}
 	}
+}
+
+//**********************************************************************************    SENDING AUDIO
+//record and send new audio message
+void recordAndSendAudio(HANDLE* hComTx) {
+	Header txHeader;
+
+	//initialize recording
+	if (!InitializeRecording()) {
+		printf("Error: Failed to initialize recording device.\n");
+		return;
+	}
+	//record into buffer
+	if (!RecordBuffer(iBigBuf, lBigBufSize)) {
+		printf("Error: Recording failed.\n");
+		CloseRecording();
+		return;
+	}
+	printf("\n\nRecording complete. (%ld samples)\n", lBigBufSize);
+
+	//prepare header
+	txHeader.payLoadType = 'A';  // 'A' for audio
+	txHeader.payloadSize = lBigBufSize * sizeof(short);
+
+	//send header and payload
+	printf("Sending audio clip (%ld bytes)...\n", txHeader.payloadSize);
+	transmit(&txHeader, (void*)iBigBuf, hComTx);
+
+	//clean up
+	CloseRecording();
+	printf("Audio transmission complete.\n");
 }
 
 //AUDIO: if user wishes to compress, encrypt, delete or send message
@@ -287,9 +288,11 @@ void testXorEncryption(HANDLE* hComTx) {
 	else {
 		printf("Done. Encrypted data sent to COM port.\n");
 	}
+	Sleep(2000);
 	system("cls");
 }
 
+//**********************************************************************************    MAIN TRANSMITTER LOOP
 //main transmitter branch loop
 void transmitterLoop(HANDLE* hComTx){
 	transmitting = TRUE;
@@ -303,10 +306,10 @@ void transmitterLoop(HANDLE* hComTx){
 			break;
 
 		case NEW_AUDIO:
-			recordNew(); //function from w1
-			listenToMsg();
-			newAudioOptions();
-			//newAudio(hComTx);
+			recordAndSendAudio(hComTx);
+			//recordNew(); //function from w1
+			//listenToMsg();
+			//newAudioOptions();
 			break;
 
 		case Tx_GO_BACK:

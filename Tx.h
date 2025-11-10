@@ -14,10 +14,12 @@ Comments:		Projects III - Coded Messaging System
 
 #include <Windows.h>
 
+//text
 void newText(HANDLE* hComTx);
-void newAudio(HANDLE* hComTx);
 void selectTextType(HANDLE* hComTx);
 void newTextAdvanced();
+//audio
+void recordAndSendAudio(HANDLE* hComTx);
 void newAudioOptions();
 void listenToMsg();
 //encrypt and decrypt
