@@ -22,7 +22,8 @@ Comments:		Projects III - Coded Messaging System
 #include "sound.h"
 #include "audioQueue.h"
 #include "config.h"
-
+#include "compress.h"
+#include "encrypt.h"
 
 //variables
 char msgOut[BUFSIZE];
@@ -34,7 +35,7 @@ int audioMsg = TRUE;
 
 //**********************************************************************************    SENDING TEXTS
 //creates and sends new text messages
-void newText(HANDLE* hComTx){
+void instantTextMsg(HANDLE* hComTx){
 	system("cls");
 	printf("\nType your messages below...\n");
 	printf("Enter 'q' to stop sending\n");
@@ -42,7 +43,7 @@ void newText(HANDLE* hComTx){
 	transmitting = TRUE;
 	while (transmitting) {
 		//collect string from the user
-		printf("\nEnter message:\n");
+		printf("\nEnter message: ");
 		fgets(msgOut, sizeof(msgOut), stdin); 
 
 		//trim newline if present
@@ -75,11 +76,11 @@ void selectTextType(HANDLE* hComTx) {
 
 		switch (textType) {
 		case INSTANT:
-			newText(hComTx); //create and send new text messages
+			instantTextMsg(hComTx); //create and send INSTANT text messaging
 			break;
 
 		case ADVANCED:
-			newTextAdvanced();
+			advancedTextMsg();
 			break;
 
 		case Tx_SUB_GO_BACK:
@@ -95,7 +96,7 @@ void selectTextType(HANDLE* hComTx) {
 }
 
 //TEXT: if user wishes to compress, encrypt or send message
-void newTextAdvanced(){
+void advancedTextMsg(){
 	system("cls");
 
 	advancedMenu = TRUE;
@@ -218,77 +219,6 @@ void listenToMsg(){
 			}
 		}
 	}
-	system("cls");
-}
-
-//**********************************************************************************    ENCRYPT / DECRPYT
-//xor encrpyt
-void xorEncrypt(const char* input, char* output, char key) {
-	int i = 0;
-	while (input[i] != '\0') {
-		output[i] = input[i] ^ key;
-		i++;
-	}
-	output[i] = '\0';
-}
-
-//xor decrpyt
-void xorDecrypt(const char* input, char* output, char key) {
-	int i = 0;
-	while (input[i] != '\0') {
-		output[i] = input[i] ^ key; // same as encode
-		i++;
-	}
-	output[i] = '\0';
-}
-
-//strip enter
-static void strip_newline(char* s) {
-	size_t n = strlen(s);
-	if (n > 0 && s[n - 1] == '\n') s[n - 1] = '\0';
-}
-
-// test function
-void testXorEncryption(HANDLE* hComTx) {
-	char input[256];
-	char encoded[256];
-	char decoded[256];
-	char choice[8];
-	char key;
-
-	printf("Enter a character key for XOR encryption: ");
-	scanf_s(" %c", &key);
-	getchar(); // consume leftover newline
-
-	printf("\nEnter text to encrypt: ");
-	if (!fgets(input, sizeof(input), stdin)) {
-		printf("Input error.\n");
-		return;
-	}
-	strip_newline(input);
-
-	xorEncrypt(input, encoded, key);
-
-	printf("\nEncrypted text (raw XOR bytes):\n");
-	for (size_t i = 0; i < strlen(encoded); i++) {
-		printf("%02X ", (unsigned char)encoded[i]);
-	}
-	printf("\n");
-
-	// send to COM port
-	outputToPort(hComTx, encoded, strlen(encoded));
-
-	printf("\nWould you like to decrypt and display it? (y/n): ");
-	if (!fgets(choice, sizeof(choice), stdin)) return;
-
-	if (tolower(choice[0]) == 'y') {
-		xorDecrypt(encoded, decoded, key);
-		printf("\nDecrypted text:\n%s\n", decoded);
-	}
-	else {
-		printf("Done. Encrypted data sent to COM port.\n");
-	}
-	Sleep(2000);
 	system("cls");
 }
 

@@ -12,6 +12,7 @@ Comments:		Projects III - Coded Messaging System
 */
 #pragma once
 
+#define EX_FATAL 1
 #define BUFSIZE 140
 
 //w5

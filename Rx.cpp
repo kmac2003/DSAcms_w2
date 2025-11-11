@@ -22,6 +22,8 @@ Comments:		Projects III - Coded Messaging System
 #include "sound.h"
 #include "audioQueue.h"
 #include "config.h"
+#include "compress.h"
+#include "encrypt.h"
 
 //variables
 char msgIn[BUFSIZE];

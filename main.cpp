@@ -8,21 +8,16 @@ Comments:		Projects III - Coded Messaging System
 
 				Main file
 
-				*** Week 3 ***
+				*** Week 4 ***
 				
 				What changes were made for this week?
 
-				- newText() and playText() now run continuously
-						allows for infinite text messaging if user chooses. This option must be selected on the
-						transmitter side (Transmitter > New Text > Instant)
-				- Audio recording/playback on home station implemented
-						currently struggling to get this to send accross the RS232 cable so further testing is required
-				- COM port number customization
-						COM port numbers are displayed on top level menu, numbers are stored in a config file, users can
-						change these numbers in Settings
-				- Encrypt and decrypt testing
-						XOR encrypt and decrypt functions were written and added to the testing switch case
-				- More menus and sub-menus were written
+				Functional audio send / receive
+				- nComRate was increased to allow for faster audio transmission
+
+				New transmit() and receive() functions
+				- code from w5 was integrated into RS232Comm.cpp
+				- transmission now follows header / payload convention
 
 ==========================================================================================================================
 */

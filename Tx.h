@@ -15,16 +15,13 @@ Comments:		Projects III - Coded Messaging System
 #include <Windows.h>
 
 //text
-void newText(HANDLE* hComTx);
+void instantTextMsg(HANDLE* hComTx);
 void selectTextType(HANDLE* hComTx);
-void newTextAdvanced();
+void advancedTextMsg();
 //audio
 void recordAndSendAudio(HANDLE* hComTx);
 void newAudioOptions();
 void listenToMsg();
-//encrypt and decrypt
-void testXorEncryption(HANDLE* hComTx);
-void xorEncrypt(const char* input, char* output, char key);
-void xorDecrypt(const char* input, char* output, char key);
+
 //main transmitter loop
 void transmitterLoop(HANDLE* hComTx);

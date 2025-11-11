@@ -22,6 +22,8 @@ Comments:		Projects III - Coded Messaging System
 #include "sound.h"
 #include "audioQueue.h"
 #include "config.h"
+#include "compress.h"
+#include "encrypt.h"
 
 #define CONFIG_FILE "config.txt"
 
@@ -31,7 +33,7 @@ void saveComPorts(int TxPort, int RxPort){
 	if (file) {
 		fprintf(file, "%d %d\n", TxPort, RxPort);
 		fclose(file);
-		printf("COM ports saved to %s\n", CONFIG_FILE);
+		printf("\nCOM ports saved to %s\n", CONFIG_FILE);
 	}
 	else {
 		printf("ERROR: Could not open %s for writing\n", CONFIG_FILE);

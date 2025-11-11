@@ -21,6 +21,8 @@ Comments:		Projects III - Coded Messaging System
 #include "sound.h"
 #include "audioQueue.h"
 #include "config.h"
+#include "compress.h"
+#include "encrypt.h"
 
 int running = TRUE;
 int txPortNum;
@@ -137,6 +139,10 @@ void configureComPorts(int* txPortNum, int* rxPortNum) {
     printf("Enter new Receiver COM number: ");
     int newRx;
     scanf_s("%d", &newRx);
+
+    Sleep(500);
+    system("cls");
+    Sleep(500);
 
     *txPortNum = newTx; //assign new com port numbers to original pointers
     *rxPortNum = newRx;

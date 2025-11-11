@@ -128,7 +128,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="audioQueue.cpp" />
+    <ClCompile Include="compress.cpp" />
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="encrypt.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RS232Comm.cpp" />
     <ClCompile Include="Rx.cpp" />
@@ -138,7 +140,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audioQueue.h" />
+    <ClInclude Include="compress.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="encrypt.h" />
     <ClInclude Include="RS232Comm.h" />
     <ClInclude Include="Rx.h" />
     <ClInclude Include="sound.h" />

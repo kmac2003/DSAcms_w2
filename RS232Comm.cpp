@@ -21,9 +21,8 @@ Comments:		Projects III - Coded Messaging System
 #include "sound.h"
 #include "audioQueue.h"
 #include "config.h"
-
-#define EX_FATAL 1
-#define CHUNK_SIZE 512
+#include "compress.h"
+#include "encrypt.h"
  
 int nComRate = 460800;				// Baud (Bit) rate in bits/second 
 int nComBits = 8;					// Number of bits per frame
