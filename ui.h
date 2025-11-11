@@ -11,7 +11,6 @@ Comments:		Projects III - Coded Messaging System
 ==========================================================================================================================
 */
 #pragma once
-
 #include <Windows.h>
 
 //main menu
@@ -91,9 +90,6 @@ void clearScreen();
 int getInput();
 
 //w3
-void configureComPorts(int* txPortNum, int* rxPortNum);
-void settingsLoop();
-void testingLoop();
 
 //w2
 //main menu

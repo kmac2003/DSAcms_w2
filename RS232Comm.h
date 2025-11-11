@@ -15,6 +15,8 @@ Comments:		Projects III - Coded Messaging System
 #define EX_FATAL 1
 #define BUFSIZE 140
 
+
+
 //w5
 typedef struct header Header;
 
@@ -33,6 +35,11 @@ struct header {
 extern int nComRate;				// Baud (Bit) rate in bits/second 
 extern int nComBits;				// Number of bits per frame
 extern COMMTIMEOUTS timeout;		// A commtimeout struct variable
+
+extern int txPortNum;
+extern int rxPortNum;
+extern HANDLE hComRx;			//pointer to receiver com port
+extern HANDLE hComTx;
 
 //w5 additions
 void transmit(Header* txHeader, void* txPayload, HANDLE* hCom);

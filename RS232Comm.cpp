@@ -31,6 +31,10 @@ char selection;													// Tx or Rx (can run two instances of this program -
 Header txHeader;												// Header transmitted 
 Header rxHeader;												// Header received
 void* rxPayload = NULL;											// Received payload (buffer) - void so it can be any data type
+int txPortNum;
+int rxPortNum;
+HANDLE hComRx;			//pointer to receiver com port
+HANDLE hComTx;			//pointer to transmitter com port
 
 //transmits header and payload
 void transmit(Header* txHeader, void* txPayload, HANDLE* hCom) {

@@ -134,7 +134,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RS232Comm.cpp" />
     <ClCompile Include="Rx.cpp" />
+    <ClCompile Include="settings.cpp" />
     <ClCompile Include="sound.cpp" />
+    <ClCompile Include="testing.cpp" />
     <ClCompile Include="Tx.cpp" />
     <ClCompile Include="ui.cpp" />
   </ItemGroup>
@@ -145,7 +147,9 @@
     <ClInclude Include="encrypt.h" />
     <ClInclude Include="RS232Comm.h" />
     <ClInclude Include="Rx.h" />
+    <ClInclude Include="settings.h" />
     <ClInclude Include="sound.h" />
+    <ClInclude Include="testing.h" />
     <ClInclude Include="Tx.h" />
     <ClInclude Include="ui.h" />
   </ItemGroup>

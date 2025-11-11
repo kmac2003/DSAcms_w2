@@ -593,8 +593,6 @@ void huffman_decompress_file(const char* input_file, const char* output_file) {
     free(decompressed_data);
 }
 
-
-
 /*************************************************************************
 *                           INTERNAL FUNCTIONS                           *
 *************************************************************************/

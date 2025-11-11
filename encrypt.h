@@ -13,7 +13,6 @@ Comments:		Projects III - Coded Messaging System
 #pragma once
 
 //XOR encrypt and decrypt
-void testXorEncryption(HANDLE* hComTx);
 void xorEncrypt(const char* input, char* output, char key);
 void xorDecrypt(const char* input, char* output, char key);
 
