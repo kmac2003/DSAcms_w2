@@ -109,7 +109,7 @@ void goBack() {
 
 //delay and clear screen
 void clearScreen(){
-    Sleep(1500);
+    Sleep(1000);
     system("cls");
 }
 
@@ -195,8 +195,11 @@ void newTextAdvancedMenu() {
 //diplays setting choices
 void settingsMenu() {
     printf("\n============= SETTINGS ================\n");
-    printf("1. Set com port numbers\n");
-    printf("2. Back");
+    printf("1. Set COM port numbers\n");
+    printf("2. Toggle headers\n");
+    printf("3. Set encryption type\n");
+    printf("4. Set compression type\n");
+    printf("5. Back");
     printf("\n===========================================\n\n");
 }
 
@@ -223,8 +226,12 @@ void runModeLoop(){
     wchar_t rxPortName[10];
 
     while (running) {
-        //init com ports
-        loadComPorts(&txPortNum, &rxPortNum);
+
+        //display program conditions
+        loadComPorts(&txPortNum, &rxPortNum); //display com port values
+        displayHeaderState(); //display header state
+        displayEncryptionType(); //display encryption type 
+        displayCompressionType(); //display compression type
 
         swprintf(txPortName, 10, L"COM%d", txPortNum); //formats PortNum into L"COM#"
         swprintf(rxPortName, 10, L"COM%d", rxPortNum);

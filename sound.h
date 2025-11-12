@@ -11,7 +11,6 @@ Comments:		Projects III - Coded Messaging System
 ==========================================================================================================================
 */
 #pragma once
-
 #include <windows.h>					// Contains WAVEFORMATEX structure
 
 // CONSTANTS - SET RECORDING TIME AND RATE

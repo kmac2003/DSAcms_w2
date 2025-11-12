@@ -25,7 +25,24 @@ Comments:		Projects III - Coded Messaging System
 #include "encrypt.h"
 #include "settings.h"
 
+#define ON 1
+#define OFF 0
+#define XOR 1
+#define VIGENERE 2
+#define HUFFMAN 1
+#define RLE 2
 
+//headers
+int setHeader = 0;
+int inToggleHeader = TRUE;
+//encryption
+int setEncrypt = 0;
+int inEncryptType = TRUE;
+//compression
+int setCompress = 0;
+int inCompressType = TRUE;
+
+//**********************************************************************************    MODIFY SETTING FUNCTIONS
 //allow user to select desired com port numbers
 void configureComPorts(int* txPortNum, int* rxPortNum) {
     system("cls");
@@ -51,6 +68,125 @@ void configureComPorts(int* txPortNum, int* rxPortNum) {
     printf("\nCOM ports updated: Tx = COM%d, Rx = COM%d\n", *txPortNum, *rxPortNum);
 }
 
+//allow user to turn message headers on/off
+void toggleHeader() {
+    system("cls");
+    inToggleHeader = TRUE;
+    while (inToggleHeader) {
+        printf("\n === Enable or disable headers === \n");
+        printf("\n1 for ON\n0 for OFF\n\n");
+        setHeader = getInput();
+        if (setHeader == ON) { //valid header state
+            printf("\nHeaders enabled!\n");
+            clearScreen();
+            break;
+        }
+        else if (setHeader == OFF) {
+            printf("\nHeaders disabled!\n");
+            clearScreen();
+            break;
+        }
+        else {
+            invalid();
+        }
+    }
+}
+
+//set encryption type (Vigenere or XOR)
+void encryptType(){
+    system("cls");
+    inEncryptType = TRUE;
+    while (inEncryptType) {
+        printf("\n === Set encryption type === \n");
+        printf("\n1 for XOR\n2 for VIGENERE\n0 to disable\n\n");
+        setEncrypt = getInput();
+        if (setEncrypt == XOR) { //XOR = 1
+            printf("\nEncrypting with XOR\n");
+            clearScreen();
+            break;
+        }
+        else if (setEncrypt == VIGENERE) { //VIGENERE = 2
+            printf("\nEncrypting with VIGENERE\n");
+            clearScreen();
+            break;
+        }
+        else if (setEncrypt == OFF) { //OFF = 0
+            printf("\nEncryption OFF\n");
+            clearScreen();
+            break;
+        }
+        else {
+            invalid();
+        }
+    }
+}
+
+//set encryption type (Huffman or RLE)
+void compressType(){
+    system("cls");
+    inCompressType = TRUE;
+    while (inCompressType) {
+        printf("\n === Set compression type === \n");
+        printf("\n1 for HUFFMAN\n2 for RLE\n0 to disable\n\n");
+        setCompress = getInput();
+        if (setCompress == HUFFMAN) { //HUFFMAN = 1
+            printf("\nCompressing with HUFFMAN\n");
+            clearScreen();
+            break;
+        }
+        else if (setCompress == RLE) { //RLE = 2
+            printf("\nCompressing with RLE\n");
+            clearScreen();
+            break;
+        }
+        else if (setCompress == OFF) { //OFF = 0
+            printf("\nCompression OFF\n");
+            clearScreen();
+            break;
+        }
+        else {
+            invalid();
+        }
+    }
+}
+
+//**********************************************************************************    STATE DISPLAY FUNCTIONS
+//display whether headers are ON or OFF
+void displayHeaderState() {
+    if (setHeader == 0) {
+        printf("Headers:\tOFF\n");
+    }
+    else {
+        printf("Headers:\tON\n");
+    }
+}
+
+//display what kind of encryption is used
+void displayEncryptionType(){
+    if (setEncrypt == 1) {
+        printf("Encryption:\tXOR\n");
+    }
+    else if (setEncrypt == 2){
+        printf("Encryption:\tVIGENERE\n");
+    }
+    else {
+        printf("Encryption:\tOFF\n");
+    }
+}
+
+//display what kind of compression is used
+void displayCompressionType(){
+    if (setCompress == 1) {
+        printf("Compression:\tHUFFMAN\n");
+    }
+    else if (setCompress == 2){
+        printf("Compression:\tRLE\n");
+    }
+    else {
+        printf("Compression:\tOFF\n");
+    }
+}
+
 //switch case for all setting configurations
 void settingsLoop() {
     system("cls");
@@ -63,6 +199,18 @@ void settingsLoop() {
         switch (setOption) {
         case CONFIG_COM:
             configureComPorts(&txPortNum, &rxPortNum);
+            break;
+
+        case TOGGLE_HEADERS:
+            toggleHeader();
+            break;
+
+        case ENCRYPT_TYPE:
+            encryptType();
+            break;
+
+        case COMPRESS_TYPE:
+            compressType();
             break;
 
         case Set_GO_BACK:

@@ -46,7 +46,7 @@ void loadComPorts(int* TxPort, int* RxPort){
 	if (file) {
 		fscanf_s(file, "%d %d", TxPort, RxPort);
 		fclose(file);
-		printf("Loaded COM ports: Tx = COM%d, Rx = COM%d\n", *TxPort, *RxPort);
+		printf("COM ports:\nTx:\t\tCOM_%d\nRx:\t\tCOM_%d\n", *TxPort, *RxPort);
 	}
 	else {
 		//default values for Kien's computer

@@ -63,7 +63,10 @@ enum RECEIVER_CHOICES {
 //settings
 enum SETTINGS {
 	CONFIG_COM = 1,
-	Set_GO_BACK = 2
+	TOGGLE_HEADERS = 2,
+	ENCRYPT_TYPE = 3,
+	COMPRESS_TYPE = 4,
+	Set_GO_BACK = 5
 };
 
 //testing

@@ -26,7 +26,9 @@ void huffman_decompress_file(const char* input_file, const char* output_file);
 int RLE_Compress(unsigned char* in, unsigned char* out, unsigned int insize);
 void RLE_Uncompress(unsigned char* in, unsigned char* out, unsigned int insize);
 
-
+//RLE encrpyt and decrypt
+int RLE_Encode(unsigned char* in, unsigned int inlen, unsigned char* out, unsigned int outlen, unsigned char esc);
+int RLE_Decode(unsigned char* in, unsigned int inlen, unsigned char* out, unsigned int outlen, unsigned char esc);
 
 // File wrapper functions
 void rle_compress_file(const char* input_file, const char* output_file);

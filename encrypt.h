@@ -16,6 +16,3 @@ Comments:		Projects III - Coded Messaging System
 void xorEncrypt(const char* input, char* output, char key);
 void xorDecrypt(const char* input, char* output, char key);
 
-//RLE encrpyt and decrypt
-int RLE_Encode(unsigned char* in, unsigned int inlen, unsigned char* out, unsigned int outlen, unsigned char esc);
-int RLE_Decode(unsigned char* in, unsigned int inlen, unsigned char* out, unsigned int outlen, unsigned char esc);
