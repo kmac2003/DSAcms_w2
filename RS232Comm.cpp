@@ -99,7 +99,7 @@ void outputToPort(HANDLE* hCom, LPCVOID buf, DWORD szBuf) {
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.	
 	}
 	else {
-		printf("\nTRANSMISSION SUCCESS! %ld bytes transmitted\n", NumberofBytesTransmitted);
+		//printf("\nTRANSMISSION SUCCESS! %ld bytes transmitted\n", NumberofBytesTransmitted);
 	}
 }
 
@@ -123,7 +123,7 @@ DWORD inputFromPort(HANDLE* hCom, LPVOID buf, DWORD szBuf) {
 		ClearCommError(hCom, lpErrors, lpStat);		// Clears the device error flag to enable additional input and output operations. Retrieves information ofthe communications error.
 	}
 	else if (NumberofBytesRead > 0) {
-		printf("\nRECEPTION SUCCESS! %ld bytes read\n", NumberofBytesRead);
+		//printf("\nRECEPTION SUCCESS! %ld bytes read\n", NumberofBytesRead);
 	}
 	//else: read succeeded but 0 bytes were read, so do nothing
 	return(NumberofBytesRead);

@@ -51,6 +51,9 @@
     <ClCompile Include="testing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fileIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -86,9 +89,15 @@
     <ClInclude Include="testing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fileIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="config.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="FortuneCookies.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>

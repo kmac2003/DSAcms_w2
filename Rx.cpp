@@ -48,11 +48,12 @@ void playText(HANDLE* hComRx){
 				break;
 			}
 		}
+		struct tm now = getTimeStruct(); //get the current time
 		//attempt to read from com port
 		bytesRead = inputFromPort(hComRx, msgIn, BUFSIZE - 1);
 		if (bytesRead > 0) {
 			msgIn[bytesRead] = '\0';
-			printf("Message received: %s\n", msgIn);
+			printf("(%02d:%02d:%02d) %s\n", now.tm_hour, now.tm_min, now.tm_sec, msgIn);
 		}
 		Sleep(100);
 	}

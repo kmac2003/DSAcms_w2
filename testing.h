@@ -12,7 +12,7 @@ Comments:		Projects III - Coded Messaging System
 */
 #pragma once
 
-void Huffman_Demo();
-void strip_newline(char* s);
-void xorEncrpyt_Demo(HANDLE* hComTx);
+void huffmanDemo();
+void stripNewline(char* s);
+void xorDemo();
 void testingLoop();

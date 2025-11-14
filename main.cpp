@@ -17,7 +17,15 @@ Comments:		Projects III - Coded Messaging System
 
 				New transmit() and receive() functions
 				- code from w5 was integrated into RS232Comm.cpp
-				- transmission now follows header / payload convention
+				- audio transmission now follows header / payload convention
+
+				Message Information
+				- information regarding the message construction state is displayed at the top of the select station
+				  menu, including: com port numbers, header setting, encryption type, compression type
+
+				More testing functions
+				- compression and encryption functions were integrated into the testing menu, along with pulling random
+				  fortunes from FortuneCookies.txt
 
 ==========================================================================================================================
 */
@@ -37,6 +45,7 @@ int	main() {
 
 	//initalization
 	initQueue();
+	srand(time(NULL));
 	InitializePlayback();
 	InitializeRecording();
 

@@ -10,6 +10,7 @@ Comments:		Projects III - Coded Messaging System
 
 ==========================================================================================================================
 */
+#define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
 #include <stdio.h>
 #include <string.h>
@@ -27,6 +28,13 @@ Comments:		Projects III - Coded Messaging System
 #include "testing.h"
 
 int running = TRUE;
+
+//get current time or date
+struct tm getTimeStruct() {
+    time_t t = time(NULL);
+    struct tm* current_time = localtime(&t);
+    return *current_time;
+}
 
 //w1
 //record new audio and save it in the front of the queue
@@ -131,8 +139,8 @@ int selectStation() {
     printf("====================================================\n");
     printf("1 - Transmit\n");
     printf("2 - Receive\n");
-    printf("3 - Enter testing\n");
-    printf("4 - Open phonebook\n");
+    printf("3 - Testing\n");
+    printf("4 - Phonebook\n");
     printf("5 - Settings\n");
     printf("6 - Quit\n\n");
     int mode = getInput();
@@ -207,14 +215,13 @@ void settingsMenu() {
 //displays testing cases
 void testingMenu() {
     printf("\n============= TESTING ================\n");
-    printf("1. Validate hardware\n");
-    printf("2. Loopback\n");
-    printf("3. Construct header\n");
-    printf("4. Sorting queue\n");
-    printf("5. Error detection\n");
-    printf("6. Encrypt / decrypt\n");
-    printf("7. Compress / decompress\n");
-    printf("8. Back");
+    printf("1. ** Loopback\n");
+    printf("2. ** Construct header\n");
+    printf("3. ** Sorting queue\n");
+    printf("4. ** Error detection\n");
+    printf("5. Encrypt / decrypt\n");
+    printf("6. Compress / decompress\n");
+    printf("7. Back");
     printf("\n===========================================================\n");
 }
 

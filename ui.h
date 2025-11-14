@@ -12,6 +12,7 @@ Comments:		Projects III - Coded Messaging System
 */
 #pragma once
 #include <Windows.h>
+#include <time.h>
 
 //main menu
 enum SELECT_MODE {
@@ -71,15 +72,17 @@ enum SETTINGS {
 
 //testing
 enum TESTING {
-	VALIDATE_HARDWARE = 1,
-	LOOPBACK = 2,
-	CONSTRUCT_HEADER = 3,
-	SORTING_QUEUE = 4,
-	ERROR_DETECT = 5,
-	ENCRYPT_DECRPYT = 6,
-	COMPRESS_DECOMPRESS = 7,
-	BACK_TESTING = 8
+	LOOPBACK = 1,
+	CONSTRUCT_HEADER = 2,
+	SORTING_QUEUE = 3,
+	ERROR_DETECT = 4,
+	ENCRYPT_DECRPYT = 5,
+	COMPRESS_DECOMPRESS = 6,
+	BACK_TESTING = 7
 };
+
+//get current time
+struct tm getTimeStruct();
 
 //w1
 void recordNew();
@@ -91,8 +94,6 @@ void invalid();
 void goBack();
 void clearScreen();
 int getInput();
-
-//w3
 
 //w2
 //main menu

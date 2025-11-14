@@ -131,6 +131,7 @@
     <ClCompile Include="compress.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="encrypt.cpp" />
+    <ClCompile Include="fileIO.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RS232Comm.cpp" />
     <ClCompile Include="Rx.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="compress.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="encrypt.h" />
+    <ClInclude Include="fileIO.h" />
     <ClInclude Include="RS232Comm.h" />
     <ClInclude Include="Rx.h" />
     <ClInclude Include="settings.h" />
@@ -155,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="config.txt" />
+    <Text Include="FortuneCookies.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

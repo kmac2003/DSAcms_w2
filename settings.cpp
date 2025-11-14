@@ -25,8 +25,8 @@ Comments:		Projects III - Coded Messaging System
 #include "encrypt.h"
 #include "settings.h"
 
-#define ON 1
 #define OFF 0
+#define ON 1
 #define XOR 1
 #define VIGENERE 2
 #define HUFFMAN 1
@@ -153,7 +153,7 @@ void compressType(){
 //**********************************************************************************    STATE DISPLAY FUNCTIONS
 //display whether headers are ON or OFF
 void displayHeaderState() {
-    if (setHeader == 0) {
+    if (setHeader == OFF) {
         printf("Headers:\tOFF\n");
     }
     else {
@@ -163,10 +163,10 @@ void displayHeaderState() {
 
 //display what kind of encryption is used
 void displayEncryptionType(){
-    if (setEncrypt == 1) {
+    if (setEncrypt == XOR) {
         printf("Encryption:\tXOR\n");
     }
-    else if (setEncrypt == 2){
+    else if (setEncrypt == VIGENERE){
         printf("Encryption:\tVIGENERE\n");
     }
     else {
@@ -176,10 +176,10 @@ void displayEncryptionType(){
 
 //display what kind of compression is used
 void displayCompressionType(){
-    if (setCompress == 1) {
+    if (setCompress == HUFFMAN) {
         printf("Compression:\tHUFFMAN\n");
     }
-    else if (setCompress == 2){
+    else if (setCompress == RLE){
         printf("Compression:\tRLE\n");
     }
     else {

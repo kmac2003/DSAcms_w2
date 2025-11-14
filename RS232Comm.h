@@ -15,8 +15,6 @@ Comments:		Projects III - Coded Messaging System
 #define EX_FATAL 1
 #define BUFSIZE 140
 
-
-
 //w5
 typedef struct header Header;
 
@@ -26,20 +24,20 @@ struct header {
 	short int rid;
 	char priority;
 	short int seqNum;
-	long int payloadSize;		// Number of bytes in payload after this header
-	char payLoadType;			// 0: Text, 1: Audio, 2: Image etc.
-	char encryption;			// 0: None, 1: XOR,	  2: Vigenere	3: Both
-	char compression;			// 0: None, 1: RLE,	  2: Huffman,	3: Both
+	long int payloadSize;		//Number of bytes in payload after this header
+	char payLoadType;			//T: Text, A: Audio
+	int encryption;				//0: OFF, 1: XOR, 2: Vigenere
+	int compression;			//0: OFF, 1: RLE, 2: Huffman
 };
 
-extern int nComRate;				// Baud (Bit) rate in bits/second 
-extern int nComBits;				// Number of bits per frame
-extern COMMTIMEOUTS timeout;		// A commtimeout struct variable
+extern int nComRate;			// Baud (Bit) rate in bits/second 
+extern int nComBits;			// Number of bits per frame
+extern COMMTIMEOUTS timeout;	// A commtimeout struct variable
 
-extern int txPortNum;
-extern int rxPortNum;
+extern int txPortNum;			//holds tx port int
+extern int rxPortNum;		    //holds rx port int
 extern HANDLE hComRx;			//pointer to receiver com port
-extern HANDLE hComTx;
+extern HANDLE hComTx;			//pointer to transmitter com port
 
 //w5 additions
 void transmit(Header* txHeader, void* txPayload, HANDLE* hCom);
