@@ -23,7 +23,6 @@ struct header {
 	short int sid;
 	short int rid;
 	char priority;
-	short int seqNum;
 	long int payloadSize;		//Number of bytes in payload after this header
 	char payLoadType;			//T: Text, A: Audio
 	int encryption;				//0: OFF, 1: XOR, 2: Vigenere
@@ -55,3 +54,6 @@ static int SetComParms(HANDLE* hCom, int nComRate, int nComBits, COMMTIMEOUTS ti
 
 //w2
 HANDLE setupComPort(const wchar_t* portName, int nComRate, int nComBits, COMMTIMEOUTS timeout);
+
+//w5
+Header buildHeader(long payloadSize, char payloadType);

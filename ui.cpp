@@ -189,7 +189,7 @@ void newTextTypeMenu() {
 
 //displays options once text message is recorded
 void newTextAdvancedMenu() {
-    printf("\n============= ADVANCED TEXT MESSAGE ================\n");
+    printf("\n=== How would you like to modify your text? ===\n");
     printf("1. Compress text\n");
     printf("2. Encrypt text\n");
     printf("3. Add text message info\n");
@@ -207,7 +207,8 @@ void settingsMenu() {
     printf("2. Toggle headers\n");
     printf("3. Set encryption type\n");
     printf("4. Set compression type\n");
-    printf("5. Back");
+    printf("5. Set SID\n");
+    printf("6. Back");
     printf("\n===========================================\n\n");
 }
 
@@ -228,6 +229,7 @@ void testingMenu() {
 //**********************************************************************************    CORE LOOP
 //runs the core Tx/Rx system
 void runModeLoop(){
+    srand(time(NULL));
     
     wchar_t txPortName[10];
     wchar_t rxPortName[10];
@@ -235,11 +237,8 @@ void runModeLoop(){
     while (running) {
 
         //display program conditions
-        loadComPorts(&txPortNum, &rxPortNum); //display com port values
-        displayHeaderState(); //display header state
-        displayEncryptionType(); //display encryption type 
-        displayCompressionType(); //display compression type
-
+        loadConfig(&txPortNum, &rxPortNum, &setHeader, &setEncrypt, &setCompress, &senderID);
+        
         swprintf(txPortName, 10, L"COM%d", txPortNum); //formats PortNum into L"COM#"
         swprintf(rxPortName, 10, L"COM%d", rxPortNum);
 

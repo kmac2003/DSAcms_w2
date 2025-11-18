@@ -95,12 +95,41 @@ void selectTextType(HANDLE* hComTx) {
 	}
 }
 
+//send text messages with a header
+void sendTextWithHeader(HANDLE* hComTx) {
+	char msgOut[BUFSIZE];
+	size_t len;
+
+	printf("\nEnter message to send (q to quit):\n");
+	fgets(msgOut, sizeof(msgOut), stdin);
+
+	len = strlen(msgOut);
+	if (len > 0 && msgOut[len - 1] == '\n') {
+		msgOut[len - 1] = '\0';
+		len--;
+	}
+
+	if (_stricmp(msgOut, "q") == 0)
+		return;
+
+	// Build header automatically based on text payload
+	Header txHeader = buildHeader(len + 1, 'T'); // 'T' = Text
+
+	// Send everything using your existing function
+	transmit(&txHeader, msgOut, hComTx);
+
+	printf("\nText Message Sent!\n");
+}
+
 //TEXT: if user wishes to compress, encrypt or send message
 void advancedTextMsg(){
 	system("cls");
 
 	advancedMenu = TRUE;
 	while (advancedMenu) {
+
+		sendTextWithHeader(&hComTx);
+		
 		newTextAdvancedMenu();
 		int textAdvanced = getInput();
 
@@ -113,8 +142,8 @@ void advancedTextMsg(){
 			printf("encrypting...\n");
 			break;
 
-		case ADD_INFO_TEXT:
-			printf("adding info...\n");
+		case ADD_HEADER_TEXT:
+			printf("adding header...\n");
 			break;
 
 		case DELETE_TEXT:

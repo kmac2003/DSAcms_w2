@@ -45,7 +45,6 @@ int	main() {
 
 	//initalization
 	initQueue();
-	srand(time(NULL));
 	InitializePlayback();
 	InitializeRecording();
 

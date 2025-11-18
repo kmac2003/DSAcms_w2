@@ -185,3 +185,35 @@ HANDLE setupComPort(const wchar_t* portName, int nComRate, int nComBits, COMMTIM
 	initPort(&hCom, (wchar_t*)portName, nComRate, nComBits, timeout);
 	return hCom;
 }
+
+//w5
+//header construction
+Header buildHeader(long payloadSize, char payloadType){
+	Header h;
+
+	printf("\n--- Message Header ---\n");
+
+	printf("\nSender ID: ");
+	scanf_s("%hd", &h.sid);
+
+	printf("\nReceiver ID: ");
+	scanf_s("%hd", &h.rid);
+
+	printf("\nPriority (1-5): ");
+	scanf_s(" %d", &h.priority);
+
+	h.payloadSize = payloadSize;
+	h.payLoadType = payloadType;
+
+	printf("\nEncryption (0: None, 1: XOR, 2: Vigenere): ");
+	scanf_s("%d", &h.encryption);
+
+	printf("\nCompression (0: None, 1: RLE, 2: Huffman): ");
+	scanf_s("%d", &h.compression);
+
+	while (getchar() != '\n'); // flush input
+
+	printf("Header Created!\n\n");
+
+	return h;
+}

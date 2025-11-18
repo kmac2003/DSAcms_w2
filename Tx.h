@@ -17,7 +17,9 @@ Comments:		Projects III - Coded Messaging System
 //text
 void instantTextMsg(HANDLE* hComTx);
 void selectTextType(HANDLE* hComTx);
+void sendTextWithHeader(HANDLE* hComTx);
 void advancedTextMsg();
+
 //audio
 void recordAndSendAudio(HANDLE* hComTx);
 void newAudioOptions();

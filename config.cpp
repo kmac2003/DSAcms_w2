@@ -24,35 +24,95 @@ Comments:		Projects III - Coded Messaging System
 #include "config.h"
 #include "compress.h"
 #include "encrypt.h"
+#include "settings.h"
+#include "testing.h"
 
 #define CONFIG_FILE "config.txt"
 
-//saves com ports to config.txt
-void saveComPorts(int TxPort, int RxPort){
-	FILE* file = fopen(CONFIG_FILE, "w");
-	if (file) {
-		fprintf(file, "%d %d\n", TxPort, RxPort);
-		fclose(file);
-		printf("\nCOM ports saved to %s\n", CONFIG_FILE);
-	}
-	else {
-		printf("ERROR: Could not open %s for writing\n", CONFIG_FILE);
-	}
+void saveConfig(int tx, int rx, int headers, int encrypt, int compress, int sid) {
+	FILE* file;
+	fopen_s(&file, CONFIG_FILE, "w");
+	if (!file) return;
+
+	fprintf(file, "COM_TX=%d\n", tx);
+	fprintf(file, "COM_RX=%d\n", rx);
+	fprintf(file, "HEADERS=%d\n", headers);
+	fprintf(file, "ENCRYPT=%d\n", encrypt);
+	fprintf(file, "COMPRESS=%d\n", compress);
+	fprintf(file, "SID=%d\n", sid);
+
+	fclose(file);
 }
 
-//loads com ports from config.txt, defaults to 5 and 6
-void loadComPorts(int* TxPort, int* RxPort){
-	FILE* file = fopen(CONFIG_FILE, "r");
-	if (file) {
-		fscanf_s(file, "%d %d", TxPort, RxPort);
-		fclose(file);
-		printf("COM ports:\nTx:\t\tCOM_%d\nRx:\t\tCOM_%d\n", *TxPort, *RxPort);
+void loadConfig(int* tx, int* rx, int* headers, int* encrypt, int* compress, int* sid) {
+	FILE* file; fopen_s(&file, CONFIG_FILE, "r");
+	
+	if (file == NULL) {
+		printf("\nERROR: No config file found. Using defaults\n");
+		return;
 	}
-	else {
-		//default values for Kien's computer
-		*TxPort = 6;
-		*RxPort = 5;
-		printf("No config file found, using defaults (Tx = COM6, Rx = COM5)\n");
-		saveComPorts(*TxPort, *RxPort);
+	char key[32];
+	int value;
+
+	while (fscanf(file, "%31[^=]=%d\n", key, &value) == 2) {
+		if (strcmp(key, "COM_TX") == 0) {
+			*tx = value;
+		}
+		else if (strcmp(key, "COM_RX") == 0) {
+			*rx = value;
+		}
+		else if (strcmp(key, "HEADERS") == 0) {
+			*headers = value;
+		}
+		else if (strcmp(key, "ENCRYPT") == 0) {
+			*encrypt = value;
+		}
+		else if (strcmp(key, "COMPRESS") == 0) {
+			*compress = value;
+		}
+		else if (strcmp(key, "SID") == 0) {
+			*sid = value;
+		}
+		// unknown keys are ignored — future-proof
 	}
+	fclose(file);
+
+	printf("=== Configuration Loaded ===\n");
+	printf("Tx\t\tCOM%d\n", *tx);
+	printf("Rx\t\tCOM%d\n", *rx);
+	printf("Headers\t\t%s\n", (*headers ? "ON" : "OFF"));
+	printf("Encryption\t");
+
+	switch (*encrypt) {
+	case OFF: 
+		printf("OFF\n"); 
+		break;
+	case XOR: 
+		printf("XOR\n"); 
+		break;
+	case VIGENERE: 
+		printf("VIGENERE\n"); 
+		break;
+	default: 
+		printf("Unknown (%d)\n", *encrypt); 
+		break;
+	}
+
+	printf("Compression\t");
+	switch (*compress) {
+	case OFF: 
+		printf("OFF\n"); 
+		break;
+	case HUFFMAN: 
+		printf("HUFFMAN\n"); 
+		break;
+	case RLE: 
+		printf("RLE\n"); 
+		break;
+	default: 
+		printf("Unknown (%d)\n", *compress); 
+		break;
+	}
+
+	printf("SID\t\t%d\n\n", *sid);
 }

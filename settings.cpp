@@ -25,13 +25,6 @@ Comments:		Projects III - Coded Messaging System
 #include "encrypt.h"
 #include "settings.h"
 
-#define OFF 0
-#define ON 1
-#define XOR 1
-#define VIGENERE 2
-#define HUFFMAN 1
-#define RLE 2
-
 //headers
 int setHeader = 0;
 int inToggleHeader = TRUE;
@@ -41,13 +34,16 @@ int inEncryptType = TRUE;
 //compression
 int setCompress = 0;
 int inCompressType = TRUE;
+//SID
+int senderID = 0;
+int inSID = TRUE;
 
 //**********************************************************************************    MODIFY SETTING FUNCTIONS
 //allow user to select desired com port numbers
-void configureComPorts(int* txPortNum, int* rxPortNum) {
+void configureComPorts() {
     system("cls");
     printf("=== COM Port Configuration ===\n");
-    printf("Current COM ports: Tx = COM%d, Rx = COM%d\n", *txPortNum, *rxPortNum);
+    printf("Current COM ports: Tx = COM%d, Rx = COM%d\n", txPortNum, rxPortNum);
 
     printf("\nEnter new Transmitter COM number: ");
     int newTx;
@@ -61,11 +57,12 @@ void configureComPorts(int* txPortNum, int* rxPortNum) {
     system("cls");
     Sleep(500);
 
-    *txPortNum = newTx; //assign new com port numbers to original pointers
-    *rxPortNum = newRx;
+    txPortNum = newTx; //assign new com port numbers to original pointers
+    rxPortNum = newRx;
 
-    saveComPorts(*txPortNum, *rxPortNum); //saves com port numbesr to config text file
-    printf("\nCOM ports updated: Tx = COM%d, Rx = COM%d\n", *txPortNum, *rxPortNum);
+    saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
+
+    printf("\nCOM ports updated: Tx = COM%d, Rx = COM%d\n", txPortNum, rxPortNum);
 }
 
 //allow user to turn message headers on/off
@@ -75,20 +72,19 @@ void toggleHeader() {
     while (inToggleHeader) {
         printf("\n === Enable or disable headers === \n");
         printf("\n1 for ON\n0 for OFF\n\n");
-        setHeader = getInput();
-        if (setHeader == ON) { //valid header state
-            printf("\nHeaders enabled!\n");
-            clearScreen();
-            break;
-        }
-        else if (setHeader == OFF) {
-            printf("\nHeaders disabled!\n");
-            clearScreen();
+
+        int choice = getInput();
+
+        if (choice == ON || choice == OFF) { //if headers are turned on or off
+            setHeader = choice;
+            printf("\nHeaders %s!\n", setHeader ? "ENABLED" : "DISABLED");
+            saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
             break;
         }
         else {
             invalid();
         }
+        clearScreen();
     }
 }
 
@@ -99,25 +95,27 @@ void encryptType(){
     while (inEncryptType) {
         printf("\n === Set encryption type === \n");
         printf("\n1 for XOR\n2 for VIGENERE\n0 to disable\n\n");
-        setEncrypt = getInput();
-        if (setEncrypt == XOR) { //XOR = 1
-            printf("\nEncrypting with XOR\n");
-            clearScreen();
-            break;
-        }
-        else if (setEncrypt == VIGENERE) { //VIGENERE = 2
-            printf("\nEncrypting with VIGENERE\n");
-            clearScreen();
-            break;
-        }
-        else if (setEncrypt == OFF) { //OFF = 0
-            printf("\nEncryption OFF\n");
-            clearScreen();
+
+        int choice = getInput();
+
+        if (choice == XOR || choice == VIGENERE || choice == OFF) { //if encryption is XOR, VIGENERE or OFF
+            setEncrypt = choice;
+            if (setEncrypt == XOR) {
+                printf("\nEncryption set to XOR\n");
+            }
+            else if (setEncrypt == VIGENERE) {
+                printf("\nEncryption set to VIGENERE\n");
+            }
+            else {
+                printf("\nEncryption OFF\n");
+            }
+            saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
             break;
         }
         else {
             invalid();
         }
+        clearScreen();
     }
 }
 
@@ -128,26 +126,45 @@ void compressType(){
     while (inCompressType) {
         printf("\n === Set compression type === \n");
         printf("\n1 for HUFFMAN\n2 for RLE\n0 to disable\n\n");
-        setCompress = getInput();
-        if (setCompress == HUFFMAN) { //HUFFMAN = 1
-            printf("\nCompressing with HUFFMAN\n");
-            clearScreen();
-            break;
-        }
-        else if (setCompress == RLE) { //RLE = 2
-            printf("\nCompressing with RLE\n");
-            clearScreen();
-            break;
-        }
-        else if (setCompress == OFF) { //OFF = 0
-            printf("\nCompression OFF\n");
-            clearScreen();
+
+        int choice = getInput();
+
+        if (choice == HUFFMAN || choice == RLE || choice == OFF) { //if compression is HUFFMAN, RLE or OFF
+            setCompress = choice;
+            if (setCompress == HUFFMAN) {
+                printf("\nCompressing with HUFFMAN\n");
+            }
+            else if (setCompress == RLE) {
+                printf("\nCompressing with RLE\n");
+            }
+            else {
+                printf("\nCompression OFF\n");
+            }
+            saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
             break;
         }
         else {
             invalid();
         }
     }
+}
+
+//write sender ID number
+void configSID(){
+    system("cls");
+    printf("\n === Configure SID Number === \n");
+
+    int number = getInput();
+
+    if (number >= 0 && number <= 255) {
+        senderID = number;
+        printf("\nSender ID set to: %d\n", number);
+        saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
+    }
+    else {
+        invalid();
+    }
+    clearScreen();
 }
 
 //**********************************************************************************    STATE DISPLAY FUNCTIONS
@@ -187,6 +204,17 @@ void displayCompressionType(){
     }
 }
 
+//display sender ID
+void displaySID() {
+    printf("SID:\t\t%d\n", senderID);
+}
+
+//display com port numbers
+void displayComPorts() {
+    printf("Tx:\t\tCOM_%d\n", txPortNum);
+    printf("Rx:\t\tCOM_%d\n", rxPortNum);
+}
+
 //switch case for all setting configurations
 void settingsLoop() {
     system("cls");
@@ -198,7 +226,7 @@ void settingsLoop() {
 
         switch (setOption) {
         case CONFIG_COM:
-            configureComPorts(&txPortNum, &rxPortNum);
+            configureComPorts();
             break;
 
         case TOGGLE_HEADERS:
@@ -211,6 +239,10 @@ void settingsLoop() {
 
         case COMPRESS_TYPE:
             compressType();
+            break;
+
+        case SENDERID:
+            configSID();
             break;
 
         case Set_GO_BACK:

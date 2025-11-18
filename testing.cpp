@@ -123,6 +123,7 @@ void xorDemo() {
 		xorDecrypt(encoded, decoded, key);
 		printf("\nDecrypted text:\n%s\n", decoded);
 	}
+    Sleep(10000);
 	clearScreen();
 }
 

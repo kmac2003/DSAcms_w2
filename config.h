@@ -12,5 +12,5 @@ Comments:		Projects III - Coded Messaging System
 */
 #pragma once
 
-void saveComPorts(int TxPort, int RxPort);
-void loadComPorts(int* TxPort, int* RxPort);
+void saveConfig(int tx, int rx, int headers, int encrypt, int compress, int sid);
+void loadConfig(int* tx, int* rx, int* headers, int* encrypt, int* compress, int* sid);
