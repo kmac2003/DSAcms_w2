@@ -26,16 +26,12 @@ Comments:		Projects III - Coded Messaging System
 #include "settings.h"
 
 //headers
-int setHeader = 0;
 int inToggleHeader = TRUE;
 //encryption
-int setEncrypt = 0;
 int inEncryptType = TRUE;
 //compression
-int setCompress = 0;
 int inCompressType = TRUE;
 //SID
-int senderID = 0;
 int inSID = TRUE;
 
 //**********************************************************************************    MODIFY SETTING FUNCTIONS
@@ -43,177 +39,82 @@ int inSID = TRUE;
 void configureComPorts() {
     system("cls");
     printf("=== COM Port Configuration ===\n");
-    printf("Current COM ports: Tx = COM%d, Rx = COM%d\n", txPortNum, rxPortNum);
+    printf("Current COM ports: Tx = COM%d, Rx = COM%d\n", cfg.COM_TX, cfg.COM_RX);
 
     printf("\nEnter new Transmitter COM number: ");
-    int newTx;
-    scanf_s("%d", &newTx);
+    cfg.COM_TX = getInput();
 
     printf("Enter new Receiver COM number: ");
-    int newRx;
-    scanf_s("%d", &newRx);
+    cfg.COM_RX = getInput();
 
-    Sleep(500);
-    system("cls");
-    Sleep(500);
-
-    txPortNum = newTx; //assign new com port numbers to original pointers
-    rxPortNum = newRx;
-
-    saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
-
-    printf("\nCOM ports updated: Tx = COM%d, Rx = COM%d\n", txPortNum, rxPortNum);
+    saveConfig(CONFIG_FILE, &cfg);
+    printf("\nCOM ports updated!\n");
 }
 
 //allow user to turn message headers on/off
 void toggleHeader() {
     system("cls");
-    inToggleHeader = TRUE;
-    while (inToggleHeader) {
-        printf("\n === Enable or disable headers === \n");
-        printf("\n1 for ON\n0 for OFF\n\n");
+    printf("\n=== Enable or disable headers ===\n");
+    printf("1 = ON\n0 = OFF\n");
 
-        int choice = getInput();
+    int choice = getInput();
+    cfg.HEADERS = (choice == 1) ? 1 : 0;
 
-        if (choice == ON || choice == OFF) { //if headers are turned on or off
-            setHeader = choice;
-            printf("\nHeaders %s!\n", setHeader ? "ENABLED" : "DISABLED");
-            saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
-            break;
-        }
-        else {
-            invalid();
-        }
-        clearScreen();
-    }
+    saveConfig(CONFIG_FILE, &cfg);
+    printf("\nHeaders %s!\n", cfg.HEADERS ? "ON" : "OFF");
 }
 
 //set encryption type (Vigenere or XOR)
-void encryptType(){
+void encryptType() {
     system("cls");
-    inEncryptType = TRUE;
-    while (inEncryptType) {
-        printf("\n === Set encryption type === \n");
-        printf("\n1 for XOR\n2 for VIGENERE\n0 to disable\n\n");
+    printf("\n=== Set encryption type ===\n");
+    printf("1 = XOR\n2 = VIGENERE\n0 = OFF\n");
 
-        int choice = getInput();
-
-        if (choice == XOR || choice == VIGENERE || choice == OFF) { //if encryption is XOR, VIGENERE or OFF
-            setEncrypt = choice;
-            if (setEncrypt == XOR) {
-                printf("\nEncryption set to XOR\n");
-            }
-            else if (setEncrypt == VIGENERE) {
-                printf("\nEncryption set to VIGENERE\n");
-            }
-            else {
-                printf("\nEncryption OFF\n");
-            }
-            saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
-            break;
-        }
-        else {
-            invalid();
-        }
-        clearScreen();
-    }
-}
-
-//set encryption type (Huffman or RLE)
-void compressType(){
-    system("cls");
-    inCompressType = TRUE;
-    while (inCompressType) {
-        printf("\n === Set compression type === \n");
-        printf("\n1 for HUFFMAN\n2 for RLE\n0 to disable\n\n");
-
-        int choice = getInput();
-
-        if (choice == HUFFMAN || choice == RLE || choice == OFF) { //if compression is HUFFMAN, RLE or OFF
-            setCompress = choice;
-            if (setCompress == HUFFMAN) {
-                printf("\nCompressing with HUFFMAN\n");
-            }
-            else if (setCompress == RLE) {
-                printf("\nCompressing with RLE\n");
-            }
-            else {
-                printf("\nCompression OFF\n");
-            }
-            saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
-            break;
-        }
-        else {
-            invalid();
-        }
-    }
-}
-
-//write sender ID number
-void configSID(){
-    system("cls");
-    printf("\n === Configure SID Number === \n");
-
-    int number = getInput();
-
-    if (number >= 0 && number <= 255) {
-        senderID = number;
-        printf("\nSender ID set to: %d\n", number);
-        saveConfig(txPortNum, rxPortNum, setHeader, setEncrypt, setCompress, senderID);
+    int choice = getInput();
+    if (choice >= 0 && choice <= 2) {
+        cfg.ENCRYPT = choice;
+        saveConfig(CONFIG_FILE, &cfg);
+        printf("\nEncryption mode updated.\n");
     }
     else {
         invalid();
     }
-    clearScreen();
 }
 
-//**********************************************************************************    STATE DISPLAY FUNCTIONS
-//display whether headers are ON or OFF
-void displayHeaderState() {
-    if (setHeader == OFF) {
-        printf("Headers:\tOFF\n");
+//set encryption type (Huffman or RLE)
+void compressType() {
+    system("cls");
+    printf("\n=== Set compression type ===\n");
+    printf("1 = Huffman\n2 = RLE\n0 = OFF\n");
+
+    int choice = getInput();
+    if (choice >= 0 && choice <= 2) {
+        cfg.COMPRESS = choice;
+        saveConfig(CONFIG_FILE, &cfg);
+        printf("\nCompression mode updated.\n");
     }
     else {
-        printf("Headers:\tON\n");
+        invalid();
     }
 }
 
-//display what kind of encryption is used
-void displayEncryptionType(){
-    if (setEncrypt == XOR) {
-        printf("Encryption:\tXOR\n");
-    }
-    else if (setEncrypt == VIGENERE){
-        printf("Encryption:\tVIGENERE\n");
+//write sender ID number
+void configSID() {
+    system("cls");
+    printf("\n=== Configure Sender ID ===\n");
+    printf("Enter integer 0–255: ");
+
+    int number = getInput();
+    if (number >= 0 && number <= 255) {
+        cfg.SID = number;
+        saveConfig(CONFIG_FILE, &cfg);
+        printf("\nSender ID updated.\n");
     }
     else {
-        printf("Encryption:\tOFF\n");
+        printf("\nInvalid SID!\n");
     }
 }
 
-//display what kind of compression is used
-void displayCompressionType(){
-    if (setCompress == HUFFMAN) {
-        printf("Compression:\tHUFFMAN\n");
-    }
-    else if (setCompress == RLE){
-        printf("Compression:\tRLE\n");
-    }
-    else {
-        printf("Compression:\tOFF\n");
-    }
-}
-
-//display sender ID
-void displaySID() {
-    printf("SID:\t\t%d\n", senderID);
-}
-
-//display com port numbers
-void displayComPorts() {
-    printf("Tx:\t\tCOM_%d\n", txPortNum);
-    printf("Rx:\t\tCOM_%d\n", rxPortNum);
-}
 
 //switch case for all setting configurations
 void settingsLoop() {

@@ -26,23 +26,9 @@ enum SELECT_MODE {
 
 //transmitter
 enum TRANSMITTER_CHOICES {
-	NEW_TEXT = 1,
-	NEW_AUDIO = 2,
+	INSTANT_TEXT = 1,
+	COMPOSE_HEADER = 2,
 	Tx_GO_BACK = 3
-};
-
-enum Tx_AUDIO_SUBMENU {
-	COMPRESS_AUDIO = 1,
-	ENCRYPT_AUDIO = 2,
-	ADD_INFO_AUDIO = 3,
-	Tx_DELETE_AUDIO = 4,
-	SEND_AUDIO = 5
-};
-
-enum TEXT_TYPE {
-	INSTANT = 1,
-	ADVANCED = 2,
-	Tx_SUB_GO_BACK = 3
 };
 
 enum Tx_TEXT_ADVANCED_MENU {
@@ -103,9 +89,6 @@ int selectStation();
 void receivingMenu();
 //transmitter
 void transmittingMenu();
-void newAudioSubMenu();
-void newTextTypeMenu();
-void newTextAdvancedMenu();
 //settings
 void settingsMenu();
 //testing

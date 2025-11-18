@@ -14,15 +14,14 @@ Comments:		Projects III - Coded Messaging System
 
 #include <Windows.h>
 
+extern int receiverID;
 //text
 void instantTextMsg(HANDLE* hComTx);
-void selectTextType(HANDLE* hComTx);
 void sendTextWithHeader(HANDLE* hComTx);
-void advancedTextMsg();
+void composeHeaderLoop();
 
 //audio
 void recordAndSendAudio(HANDLE* hComTx);
-void newAudioOptions();
 void listenToMsg();
 
 //main transmitter loop

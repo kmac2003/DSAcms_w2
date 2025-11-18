@@ -22,7 +22,7 @@ typedef struct header Header;
 struct header {
 	short int sid;
 	short int rid;
-	char priority;
+	int priority;
 	long int payloadSize;		//Number of bytes in payload after this header
 	char payLoadType;			//T: Text, A: Audio
 	int encryption;				//0: OFF, 1: XOR, 2: Vigenere

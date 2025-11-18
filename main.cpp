@@ -8,24 +8,13 @@ Comments:		Projects III - Coded Messaging System
 
 				Main file
 
-				*** Week 4 ***
+				*** Week 5 ***
 				
 				What changes were made for this week?
 
-				Functional audio send / receive
-				- nComRate was increased to allow for faster audio transmission
-
-				New transmit() and receive() functions
-				- code from w5 was integrated into RS232Comm.cpp
-				- audio transmission now follows header / payload convention
-
-				Message Information
-				- information regarding the message construction state is displayed at the top of the select station
-				  menu, including: com port numbers, header setting, encryption type, compression type
-
-				More testing functions
-				- compression and encryption functions were integrated into the testing menu, along with pulling random
-				  fortunes from FortuneCookies.txt
+				Message parameters saved to CONFIG
+				- message information used to construct the header is now saved to a config file
+				- includes Tx number, Rx numbers, headers on/off, encryption type, compression type, and SID
 
 ==========================================================================================================================
 */

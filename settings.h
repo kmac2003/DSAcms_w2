@@ -19,21 +19,11 @@ Comments:		Projects III - Coded Messaging System
 #define HUFFMAN 1
 #define RLE 2
 
-extern int setHeader;
-extern int setEncrypt;
-extern int setCompress;
-extern int senderID;
 
 void configureComPorts();
 void toggleHeader();
 void encryptType();
 void compressType();
 void configSID();
-//display data functions
-void displayHeaderState();
-void displayEncryptionType();
-void displayCompressionType();
-void displaySID();
-void displayComPorts();
 //main settings loop
 void settingsLoop();

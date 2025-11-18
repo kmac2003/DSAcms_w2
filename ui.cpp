@@ -134,9 +134,11 @@ int getInput() {
 //**********************************************************************************    PRINTF MENUS
 //select whether the program functions as a transmitter or receiver
 int selectStation() {
-    printf("====================================================\n");
-    printf("    CMS PROJECT - KIEN MATTHEW TROY\n");
-    printf("====================================================\n");
+    struct tm now = getTimeStruct();
+    printf("================================\n");
+    printf("    CMS: Kien Matthew Troy\n");
+    printf("    Date: (%02d:%02d:%02d)\n", now.tm_mday, (now.tm_mon + 1), (now.tm_year) + 1900);
+    printf("================================\n");
     printf("1 - Transmit\n");
     printf("2 - Receive\n");
     printf("3 - Testing\n");
@@ -161,41 +163,9 @@ void receivingMenu(){
 //selects what kind of message user wishes to send
 void transmittingMenu() {
     printf("\n============= TRANSMITTING STATION ================\n");
-    printf("1. Write a new text message\n");
-    printf("2. Record new audio message\n");
+    printf("1. Instant text message\n");
+    printf("2. Compose header\n");
     printf("3. Back");
-    printf("\n===========================================================\n");
-}
-
-//displays options once audio message is recorded
-void newAudioSubMenu() {
-    printf("\n============= AUDIO MESSAGE OPTIONS ================\n");
-    printf("1. Compress audio\n");
-    printf("2. Encrypt audio\n");
-    printf("3. Add audio message info\n");
-    printf("4. Delete\n");
-    printf("5. Send");
-    printf("\n===========================================================\n");
-}
-
-//user can select instant messaging, or messages that can be encrypted or compressed
-void newTextTypeMenu() {
-    printf("\n============= SELECT TEXT MESSAGE TYPE ================\n");
-    printf("1. Instant\n");
-    printf("2. Advanced\n");
-    printf("3. Back");
-    printf("\n===========================================================\n");
-}
-
-//displays options once text message is recorded
-void newTextAdvancedMenu() {
-    printf("\n=== How would you like to modify your text? ===\n");
-    printf("1. Compress text\n");
-    printf("2. Encrypt text\n");
-    printf("3. Add text message info\n");
-    printf("4. Delete\n");
-    printf("5. Send\n");
-    printf("6. Back");
     printf("\n===========================================================\n");
 }
 
@@ -234,10 +204,15 @@ void runModeLoop(){
     wchar_t txPortName[10];
     wchar_t rxPortName[10];
 
+    if (loadConfig(CONFIG_FILE, &cfg) != 0) {   // load file into cfg
+        setDefaultConfig(&cfg);                 // file missing? use defaults
+        saveConfig(CONFIG_FILE, &cfg);          // write defaults to file
+    }
+
     while (running) {
 
         //display program conditions
-        loadConfig(&txPortNum, &rxPortNum, &setHeader, &setEncrypt, &setCompress, &senderID);
+        displayFullConfiguration();
         
         swprintf(txPortName, 10, L"COM%d", txPortNum); //formats PortNum into L"COM#"
         swprintf(rxPortName, 10, L"COM%d", rxPortNum);
