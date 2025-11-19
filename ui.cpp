@@ -136,7 +136,7 @@ int getInput() {
 int selectStation() {
     struct tm now = getTimeStruct();
     printf("================================\n");
-    printf("    CMS: Kien Matthew Troy\n");
+    printf("    23- CMS: Kien Matthew Troy\n");
     printf("    Date: (%02d:%02d:%02d)\n", now.tm_mday, (now.tm_mon + 1), (now.tm_year) + 1900);
     printf("================================\n");
     printf("1 - Transmit\n");
@@ -204,18 +204,15 @@ void runModeLoop(){
     wchar_t txPortName[10];
     wchar_t rxPortName[10];
 
-    if (loadConfig(CONFIG_FILE, &cfg) != 0) {   // load file into cfg
-        setDefaultConfig(&cfg);                 // file missing? use defaults
-        saveConfig(CONFIG_FILE, &cfg);          // write defaults to file
-    }
+    loadConfig(CONFIG_FILE, &cfg);
 
     while (running) {
 
         //display program conditions
         displayFullConfiguration();
         
-        swprintf(txPortName, 10, L"COM%d", txPortNum); //formats PortNum into L"COM#"
-        swprintf(rxPortName, 10, L"COM%d", rxPortNum);
+        swprintf(txPortName, 10, L"COM%d", (txPortNum = cfg.COM_TX)); //formats PortNum into L"COM#"
+        swprintf(rxPortName, 10, L"COM%d", (rxPortNum = cfg.COM_RX));
 
         int mode = selectStation(); //users decide if this is transmitter or receiver
 

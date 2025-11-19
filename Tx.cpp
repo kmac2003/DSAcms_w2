@@ -227,6 +227,10 @@ void transmitterLoop(HANDLE* hComTx){
 			transmitting = FALSE;
 			break;
 
+		case 4:
+			recordAndSendAudio(hComTx);
+			break;
+
 		default:
 			invalid();
 			break;

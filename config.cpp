@@ -31,97 +31,66 @@ Config cfg;
 
 //load config into memory
 int loadConfig(const char* filename, Config* cfg) {
-    FILE* file = fopen(filename, "r");
-    if (!file) {
-        printf("Config file not found! Creating default...\n");
+    FILE* fp = fopen(filename, "r");
+    if (!fp) {
+        printf("Config not found. Applying defaults...\n");
         setDefaultConfig(cfg);
-        saveConfig(filename, cfg);
-        return -1;
+        saveConfig(filename, cfg); // Write a fresh file
+        return 0;
     }
 
     char line[128];
-    int section = 0; // 0 = none, 1 = SETTINGS, 2 = TX-PARAMS
-
-    while (fgets(line, sizeof(line), file)) {
-        // Remove newline characters
-        line[strcspn(line, "\r\n")] = 0;
-
-        // Skip empty lines or comments
-        if (line[0] == '\0' || line[0] == '#')
+    while (fgets(line, sizeof(line), fp)) {
+        if (line[0] == '%' || line[0] == '\n')
             continue;
 
-        // Check sections
-        if (strcmp(line, "%%--SETTINGS--%%") == 0) {
-            section = 1;
-            continue;
+        char key[32];
+        int value;
+        if (sscanf(line, "%31[^=]=%d", key, &value) == 2) {
+
+            if (strcmp(key, "COM_TX") == 0)     cfg->COM_TX = value;
+            else if (strcmp(key, "COM_RX") == 0)     cfg->COM_RX = value;
+            else if (strcmp(key, "HEADERS") == 0)    cfg->HEADERS = value;
+            else if (strcmp(key, "ENCRYPT") == 0)    cfg->ENCRYPT = value;
+            else if (strcmp(key, "COMPRESS") == 0)   cfg->COMPRESS = value;
+            else if (strcmp(key, "SID") == 0)        cfg->SID = value;
+            else if (strcmp(key, "RID") == 0)        cfg->RID = value;
+            else if (strcmp(key, "PRIORITY") == 0)   cfg->PRIORITY = value;
+            else if (strcmp(key, "MSGTYPE") == 0)    cfg->MSGTYPE = value;
         }
-        if (strcmp(line, "%%--TX-PARAMS--%%") == 0) {
-            section = 2;
-            continue;
-        }
-
-        // Parse lines based on section
-		if (section == 1) { // SETTINGS
-			int value;
-			if (sscanf(line, "COM_TX = %d", &value) == 1) cfg->COM_TX = value;
-			else if (sscanf(line, "COM_RX = %d", &value) == 1) cfg->COM_RX = value;
-			else if (sscanf(line, "HEADERS = %d", &value) == 1) cfg->HEADERS = value;
-			else if (sscanf(line, "ENCRYPT = %d", &value) == 1) cfg->ENCRYPT = value;
-			else if (sscanf(line, "COMPRESS = %d", &value) == 1) cfg->COMPRESS = value;
-			else if (sscanf(line, "SID = %d", &value) == 1) cfg->SID = value;
-		}
-		else if (section == 2) { // TX-PARAMS
-			int value;
-			if (sscanf(line, "RID = %d", &value) == 1) cfg->RID = value;
-			else if (sscanf(line, "PRIORITY = %d", &value) == 1) cfg->PRIORITY = value;
-			else if (sscanf(line, "MSGTYPE = %d", &value) == 1) cfg->MSGTYPE = value;
-		}
     }
 
-    fclose(file);
-
-    printf("\n--- Loaded Config ---\n");
-    printf("COM_TX: %d\n", cfg->COM_TX);
-    printf("COM_RX: %d\n", cfg->COM_RX);
-    printf("HEADERS: %d\n", cfg->HEADERS);
-    printf("ENCRYPT: %d\n", cfg->ENCRYPT);
-    printf("COMPRESS: %d\n", cfg->COMPRESS);
-    printf("SID: %d\n", cfg->SID);
-    printf("RID: %d\n", cfg->RID);
-    printf("PRIORITY: %d\n", cfg->PRIORITY);
-    printf("MSGTYPE: %d\n", cfg->MSGTYPE);
-
-    return 0;
+    fclose(fp);
+    return 1;
 }
 
 //save config from memory
 int saveConfig(const char* filename, const Config* cfg) {
-	FILE* file = fopen(filename, "w");
-	if (!file) {
-		printf("Error: Could not save config.\n");
-		return -1;
-	}
+    FILE* fp = fopen(filename, "w");
+    if (!fp) {
+        printf("Error: Could not save config!\n");
+        return 0;
+    }
 
-	fprintf(file, "%%--SETTINGS--%%\n");
-	fprintf(file, "COM_TX=%d\n", cfg->COM_TX);
-	fprintf(file, "COM_RX=%d\n", cfg->COM_RX);
-	fprintf(file, "HEADERS=%d\n", cfg->HEADERS);
-	fprintf(file, "ENCRYPT=%d\n", cfg->ENCRYPT);
-	fprintf(file, "COMPRESS=%d\n", cfg->COMPRESS);
-	fprintf(file, "SID=%d\n", cfg->SID);
-	fprintf(file, "%%--TX-PARAMS--%%\n");
-	fprintf(file, "RID=%d\n", cfg->RID);
-	fprintf(file, "PRIORITY=%d\n", cfg->PRIORITY);
-	fprintf(file, "MSGTYPE=%d\n", cfg->MSGTYPE);
+    fprintf(fp, "%%--SETTINGS--%%\n");
+    fprintf(fp, "COM_TX=%d\n", cfg->COM_TX);
+    fprintf(fp, "COM_RX=%d\n", cfg->COM_RX);
+    fprintf(fp, "HEADERS=%d\n", cfg->HEADERS);
+    fprintf(fp, "ENCRYPT=%d\n", cfg->ENCRYPT);
+    fprintf(fp, "COMPRESS=%d\n", cfg->COMPRESS);
+    fprintf(fp, "SID=%d\n", cfg->SID);
+    fprintf(fp, "%%--TX-PARAMS--%%\n");
+    fprintf(fp, "RID=%d\n", cfg->RID);
+    fprintf(fp, "PRIORITY=%d\n", cfg->PRIORITY);
+    fprintf(fp, "MSGTYPE=%d\n", cfg->MSGTYPE);
 
-	fclose(file);
-	printf("Config saved successfully.\n");
-	return 0;
+    fclose(fp);
+    return 1;
 }
 
 //set or update a parameter
 void setDefaultConfig(Config* cfg) {
-	cfg->COM_TX = 5;
+	cfg->COM_TX = 4;
 	cfg->COM_RX = 6;
 	cfg->HEADERS = 0;
 	cfg->ENCRYPT = 0;
@@ -134,40 +103,44 @@ void setDefaultConfig(Config* cfg) {
 }
 
 void displayFullConfiguration() {
-	system("cls");
+    printf("=== SYSTEM SETTINGS ===\n");
+    printf("Tx\t\tCOM%d\n", cfg.COM_TX);
+    printf("Rx\t\tCOM%d\n", cfg.COM_RX);
+    if (cfg.HEADERS == ON) {
+        printf("HEADERS\t\tON\n");
+    }
+    else {
+        printf("HEADERS\t\tOFF\n");
+    }
 
-	printf("=====================================\n");
-	printf("       CURRENT CONFIGURATION\n");
-	printf("=====================================\n\n");
+    if (cfg.ENCRYPT == XOR) { 
+        printf("ENCRYPT\t\tXOR\n");
+    }
+    else if (cfg.ENCRYPT == VIGENERE) {
+        printf("ENCRYPT\t\tVIGENERE\n");
+    }
+    else {
+        printf("ENCRYPT\t\tOFF\n");
+    }
 
-	printf("---- SETTINGS ----\n");
-	printf("COM_TX:\t\tCOM%d\n", cfg.COM_TX);
-	printf("COM_RX:\t\tCOM%d\n", cfg.COM_RX);
-	printf("HEADERS:\t%s\n", cfg.HEADERS ? "ON" : "OFF");
+    if (cfg.COMPRESS == HUFFMAN) {
+        printf("COMPRESS\tHUFFMAN\n");
+    }
+    else if (cfg.COMPRESS == RLE) {
+        printf("COMPRESS\tRLE\n");
+    }
+    else {
+        printf("COMPRESS\tOFF\n");
+    }
+    printf("SID\t\t%d\n", cfg.SID);
+    printf("\n=== Tx HEADER SETTINGS ===\n");
+    printf("RID\t\t%d\n", cfg.RID);
+    printf("PRIORITY\t%d\n", cfg.PRIORITY);
 
-	switch (cfg.ENCRYPT) {
-	case 1: printf("ENCRYPTION:\tXOR\n"); break;
-	case 2: printf("ENCRYPTION:\tVIGENERE\n"); break;
-	default: printf("ENCRYPTION:\tOFF\n"); break;
-	}
-
-	switch (cfg.COMPRESS) {
-	case 1: printf("COMPRESSION:\tHUFFMAN\n"); break;
-	case 2: printf("COMPRESSION:\tRLE\n"); break;
-	default: printf("COMPRESSION:\tOFF\n"); break;
-	}
-
-	printf("SID:\t\t%d\n", cfg.SID);
-
-	printf("\n---- TX PARAMETERS ----\n");
-	printf("RID:\t\t%d\n", cfg.RID);
-	printf("PRIORITY:\t%d\n", cfg.PRIORITY);
-
-	switch (cfg.MSGTYPE) {
-	case 1: printf("MSGTYPE:\tTEXT\n"); break;
-	case 2: printf("MSGTYPE:\tAUDIO\n"); break;
-	default: printf("MSGTYPE:\tNONE\n"); break;
-	}
-
-	printf("\n=====================================\n\n");
+    if (cfg.MSGTYPE == 1) {
+        printf("TYPE\t\tTEXT\n");
+    }
+    else if (cfg.MSGTYPE == 2) {
+        printf("TYPE\t\tAUDIO\n");
+    }
 }

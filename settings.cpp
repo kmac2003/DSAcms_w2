@@ -47,6 +47,10 @@ void configureComPorts() {
     printf("Enter new Receiver COM number: ");
     cfg.COM_RX = getInput();
 
+    //update port nums
+    txPortNum = cfg.COM_TX;
+    rxPortNum = cfg.COM_RX;
+
     saveConfig(CONFIG_FILE, &cfg);
     printf("\nCOM ports updated!\n");
 }
@@ -114,7 +118,6 @@ void configSID() {
         printf("\nInvalid SID!\n");
     }
 }
-
 
 //switch case for all setting configurations
 void settingsLoop() {
