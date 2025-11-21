@@ -96,3 +96,16 @@ link peekQueue() {
 	}
 	return front;
 }
+
+//queues text only
+void enqueueText(const char* msg, const char* label) {
+	long size = strlen(msg) + 1;
+	short* buf = (short*)malloc(size * sizeof(short));
+	if (!buf) return;
+
+	for (int i = 0; i < size; i++)
+		buf[i] = (short)msg[i]; // Store ASCII as short
+
+	enqueue(buf, size, label);
+	free(buf);
+}

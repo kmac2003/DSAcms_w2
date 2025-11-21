@@ -187,33 +187,29 @@ HANDLE setupComPort(const wchar_t* portName, int nComRate, int nComBits, COMMTIM
 }
 
 //w5
+
 //header construction
-Header buildHeader(long payloadSize, char payloadType){
+Header buildHeader(long payloadSize, char payloadType) {
 	Header h;
 
-	printf("\n--- Message Header ---\n");
-
-	printf("\nSender ID: ");
-	scanf_s("%hd", &h.sid);
-
-	printf("\nReceiver ID: ");
-	scanf_s("%hd", &h.rid);
-
-	printf("\nPriority (1-5): ");
-	scanf_s(" %d", &h.priority);
-
+	// Fill from loaded configuration
+	h.sid = (short)cfg.SID;
+	h.rid = (short)cfg.RID;
+	h.priority = cfg.PRIORITY;
 	h.payloadSize = payloadSize;
 	h.payLoadType = payloadType;
+	h.encryption = cfg.ENCRYPT;
+	h.compression = cfg.COMPRESS;
 
-	printf("\nEncryption (0: None, 1: XOR, 2: Vigenere): ");
-	scanf_s("%d", &h.encryption);
-
-	printf("\nCompression (0: None, 1: RLE, 2: Huffman): ");
-	scanf_s("%d", &h.compression);
-
-	while (getchar() != '\n'); // flush input
-
-	printf("Header Created!\n\n");
+	printf("\n--- Auto-Generated Message Header ---\n");
+	printf("SID:         %d\n", h.sid);
+	printf("RID:         %d\n", h.rid);
+	printf("Priority:    %d\n", h.priority);
+	printf("PayloadSize: %ld\n", h.payloadSize);
+	printf("PayloadType: %d\n", h.payLoadType);
+	printf("Encryption:  %d\n", h.encryption);
+	printf("Compression: %d\n", h.compression);
+	printf("-----------------------------------\n\n");
 
 	return h;
 }

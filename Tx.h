@@ -15,6 +15,8 @@ Comments:		Projects III - Coded Messaging System
 #include <Windows.h>
 
 extern int receiverID;
+extern char msgOut[];
+
 //text
 void instantTextMsg(HANDLE* hComTx);
 void sendTextWithHeader(HANDLE* hComTx);

@@ -136,7 +136,7 @@ int getInput() {
 int selectStation() {
     struct tm now = getTimeStruct();
     printf("================================\n");
-    printf("    23- CMS: Kien Matthew Troy\n");
+    printf("    265- CMS: Kien Matthew Troy\n");
     printf("    Date: (%02d:%02d:%02d)\n", now.tm_mday, (now.tm_mon + 1), (now.tm_year) + 1900);
     printf("================================\n");
     printf("1 - Transmit\n");
@@ -155,7 +155,8 @@ void receivingMenu(){
     printf("\n============= RECEIVING STATION ================\n");
     printf("1. Play recent text message\n");
     printf("2. Play recent audio message\n");
-    printf("3. Back");
+    printf("3. Show queue\n");
+    printf("4. Back");
     printf("\n===========================================================\n");
 }
 
@@ -226,13 +227,14 @@ void runModeLoop(){
 
         case RECEIVER:
             hComRx = setupComPort(rxPortName, nComRate, nComBits, timeout); //setup Rx port
-            receiverLoop(&hComRx); //run receiver menu loop
+            //receiverLoop(&hComRx); //run receiver menu loop
+            receiverLoopNew(&hComRx); //receive headers
             CloseHandle(hComRx);
             purgePort(&hComRx);
             break;
 
         case TESTING:
-            testingLoop();
+            testingLoop(&hComTx);
             break;
 
         case PHONEBOOK:

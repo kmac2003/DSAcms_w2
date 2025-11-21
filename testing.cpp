@@ -30,6 +30,7 @@ Comments:		Projects III - Coded Messaging System
 #include "fileIO.h"
 
 char currQuote[MAX_QUOTE_LENGTH]; // Buffer to write the message to
+int newchoice = 0;
 
 //demonstrates huffman compression / decompression
 void huffmanDemo() {
@@ -127,8 +128,40 @@ void xorDemo() {
 	clearScreen();
 }
 
+void sendQuotes(HANDLE* hComTx) {
+    newchoice = 0;
+
+    while (1) {
+
+        printf("1 - Send 3 Random Quotes\n");
+        printf("0 - Exit\n");
+        printf("Enter option: ");
+        scanf_s("%d", &newchoice);
+
+        if (newchoice == 0) break;
+
+        switch (newchoice) {
+
+        case 1: // Send 3 random quotes
+            for (int i = 0; i < 3; i++) {
+                getRandQuote(currQuote);
+                char* quote = currQuote;
+
+                outputToPort(hComTx, (char*)quote, strlen(quote) + 1); // +1 includes null terminator
+
+                Sleep(200); // Avoid merging messages over UART
+            }
+            break;
+
+        default:
+            printf("Invalid selection.\n");
+            break;
+        }
+    }
+}
+
 //switch case for all testing functions
-void testingLoop() {
+void testingLoop(HANDLE* hComTx) {
     system("cls");
     int inTesting = TRUE;
     while (inTesting) {
@@ -145,6 +178,7 @@ void testingLoop() {
             break;
 
         case SORTING_QUEUE:
+            sendQuotes(hComTx);
             break;
 
         case ERROR_DETECT:

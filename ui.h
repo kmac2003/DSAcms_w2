@@ -44,7 +44,8 @@ enum Tx_TEXT_ADVANCED_MENU {
 enum RECEIVER_CHOICES {
 	PLAY_TEXT = 1,
 	PLAY_AUDIO = 2,
-	Rx_GO_BACK = 3
+	SHOW_QUEUE = 3,
+	Rx_GO_BACK = 4
 };
 
 //settings

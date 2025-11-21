@@ -15,4 +15,6 @@ Comments:		Projects III - Coded Messaging System
 void huffmanDemo();
 void stripNewline(char* s);
 void xorDemo();
-void testingLoop();
+void testingLoop(HANDLE* hComTx);
+
+void sendQuotes(HANDLE* hComTx);

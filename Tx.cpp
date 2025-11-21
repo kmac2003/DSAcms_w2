@@ -93,7 +93,7 @@ void sendTextWithHeader(HANDLE* hComTx) {
 		return;
 
 	// Build header automatically based on text payload
-	Header txHeader = buildHeader(len + 1, 'T'); // 'T' = Text
+	Header txHeader = buildHeader(len + 1, cfg.MSGTYPE); //
 
 	// Send everything using your existing function
 	transmit(&txHeader, msgOut, hComTx);
@@ -130,6 +130,8 @@ void composeHeaderLoop() {
 		if (choice == TEXT) {
 			printf("\nText message selected.\n");
 			cfg.MSGTYPE = 1;  // Text
+
+			sendTextWithHeader(&hComTx);
 		}
 		else if (choice == AUDIO) {
 			printf("\nAudio message selected.\n");

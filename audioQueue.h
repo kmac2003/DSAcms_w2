@@ -46,3 +46,5 @@ void enqueue(short* buf, long size, const char* name);
 link deQueue();
 void clearQueue();
 link peekQueue();
+
+void enqueueText(const char* msg, const char* label);

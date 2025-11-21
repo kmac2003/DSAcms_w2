@@ -16,15 +16,15 @@ Comments:		Projects III - Coded Messaging System
 #define BUFSIZE 140
 
 //w5
-typedef struct header Header;
+
 
 //w5
-struct header {
+typedef struct Header {
 	short int sid;
 	short int rid;
 	int priority;
 	long int payloadSize;		//Number of bytes in payload after this header
-	char payLoadType;			//T: Text, A: Audio
+	int payLoadType;			//1: Text, 2: Audio
 	int encryption;				//0: OFF, 1: XOR, 2: Vigenere
 	int compression;			//0: OFF, 1: RLE, 2: Huffman
 };
