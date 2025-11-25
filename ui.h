@@ -72,7 +72,6 @@ enum TESTING {
 struct tm getTimeStruct();
 
 //w1
-void recordNew();
 void saveFront();
 void playFront();
 void deleteFront();

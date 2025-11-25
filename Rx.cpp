@@ -25,9 +25,6 @@ Comments:		Projects III - Coded Messaging System
 #include "compress.h"
 #include "encrypt.h"
 
-#define OLD 0
-#define NEW 1
-
 //variables
 char msgIn[BUFSIZE];
 BOOL listening = TRUE;
@@ -35,43 +32,75 @@ DWORD bytesRead = 0;
 DWORD totalRead = 0;
 int choice = 0;
 
-/*
-//read exact number of bytes from the com port
-int readBytes(HANDLE* hCom, void* buffer, DWORD bytesToRead){
-	while (totalRead < bytesToRead) {
-		if (!ReadFile(*hCom, (char*)buffer + totalRead, bytesToRead - totalRead, &bytesRead, NULL)){
-			return 0; //failure
+//receives the message and header, then plays the string or audio
+void receiveMessage(HANDLE* hComRx){
+	Header rxHeader;
+	void* rxPayload = NULL;
+	DWORD bytesRead;
+
+	bytesRead = receive(&rxHeader, &rxPayload, hComRx);
+	if (bytesRead == 0 || rxPayload == NULL) {
+		printf("\nError: No data received.\n");
+		return;
+	}
+
+	// Display header info
+	printf("\n===== RECEIVED MESSAGE HEADER =====\n");
+	printf("SID\t\t%d\n", rxHeader.sid);
+	printf("RID\t\t%d\n", rxHeader.rid);
+	printf("Priority\t%d\n", rxHeader.priority);
+	printf("Size\t\t%d\n", rxHeader.payloadSize);
+	printf("Msg Type\t%d\n", rxHeader.payLoadType);
+	printf("Encryption\t%d\n", rxHeader.encryption);
+	printf("Compression\t%d\n", rxHeader.compression);
+	printf("===================================\n");
+
+	struct tm now = getTimeStruct();
+
+	if (rxHeader.payLoadType == PAYLOAD_TEXT) {
+		// Ensure null-terminated string
+		char* textMessage = (char*)rxPayload;
+		textMessage[rxHeader.payloadSize - 1] = '\0';
+		printf("(%02d:%02d:%02d) %s\n", now.tm_hour, now.tm_min, now.tm_sec, textMessage);
+
+		// Enqueue text with header
+		char label[MAX_FILENAME];
+		snprintf(label, MAX_FILENAME, "Text Msg %d", rxHeader.priority);
+		enqueueTextAndHdr(textMessage, label, &rxHeader);
+	}
+	else if (rxHeader.payLoadType == PAYLOAD_AUDIO) {
+		// Cast payload to audio buffer
+		short* audioBuffer = (short*)rxPayload;
+		long numSamples = rxHeader.payloadSize / sizeof(short);
+
+		// Play audio
+		if (!InitializePlayback()) {
+			printf("Playback initialization failed.\n");
+			free(rxPayload);
+			return;
 		}
-		if (bytesRead == 0) {
-			Sleep(1);
-			continue;
-		}
-		totalRead += bytesRead;
+
+		printf("Playing received audio (%ld samples)...\n", numSamples);
+		PlayBuffer(audioBuffer, numSamples);
+		ClosePlayback();
+
+		// Enqueue audio with header
+		char label[MAX_FILENAME];
+		snprintf(label, MAX_FILENAME, "Audio Msg %d", rxHeader.priority);
+		enqueueAudioAndHdr(audioBuffer, numSamples, label, &rxHeader);
 	}
-	return 1;
+	else {
+		printf("Unknown payload type!\n");
+	}
+
+	free(rxPayload);
+
+	// Prompt user to continue
+	printf("\nPress Enter to continue...");
+	while (getchar() != '\n');
+	clearScreen();
 }
 
-//read an incoming header
-int readHeader(HANDLE* hCom, Header* hdr){
-	DWORD headerSize = sizeof(Header);
-
-	if (!readBytes(hCom, hdr, headerSize)) {
-		return 0; //failed to read complete header
-	}
-	return 1; //success
-}
-
-//read payload into the buffer
-int readPayload(HANDLE* hCom, void* buffer, long payloadSize){
-	if (payloadSize <= 0) {
-		printf("Invalid payload size\n");
-		return 0;
-	}
-	return readBytes(hCom, buffer, (DWORD)payloadSize);
-}
-*/
-
-//**********************************************************************************    RECEIVING TEXTS
 //continuously receives and displays new text messages until user decides to stop
 void rxInstantText(HANDLE* hComRx){
 	system("cls");
@@ -100,6 +129,7 @@ void rxInstantText(HANDLE* hComRx){
 	}
 }
 
+/*
 //receive header and text message
 void receiveTextMessage(HANDLE* hComRx) {
 	Header rxHeader;
@@ -135,7 +165,7 @@ void receiveTextMessage(HANDLE* hComRx) {
 
 	//enqueue the text message and header
 	char label[MAX_FILENAME];
-	snprintf(label, MAX_FILENAME, "Msg P%d", rxHeader.priority);
+	snprintf(label, MAX_FILENAME, "Text Msg %d", rxHeader.priority);
 	enqueueTextAndHdr(textMessage, label, &rxHeader);
 
 	// Free the allocated payload buffer
@@ -146,8 +176,9 @@ void receiveTextMessage(HANDLE* hComRx) {
 	while (getchar() != '\n'); // wait for Enter
 	clearScreen();
 }
+*/
 
-//**********************************************************************************    RECEIVING AUDIO
+/*
 void receiveAudioAndPlay(HANDLE* hComRx) {
 	Header rxHeader;
 	void* rxPayload = NULL;   // this will be allocated inside receive()
@@ -184,6 +215,7 @@ void receiveAudioAndPlay(HANDLE* hComRx) {
 
 	printf("Audio playback complete.\n");
 }
+*/
 
 //main transmitter branch loop
 void receiverLoop() {
@@ -208,9 +240,8 @@ void receiverLoop() {
 				system("cls");
 				printf("\nReceiving...\n");
 
-				receiveTextMessage(&hComRx);
-				//rxInstantText(&hComRx);      
-				//receiveAudioAndPlay(&hComRx);
+				receiveMessage(&hComRx);
+				//rxInstantText(&hComRx);
 				break;
 
 			case SEE_QUEUE:
@@ -222,6 +253,7 @@ void receiverLoop() {
 
 			case Rx_GO_BACK:
 				goBack();
+				receiving = FALSE;
 				inLoop = FALSE;   // exit inner menu loop
 				break;
 
@@ -244,98 +276,3 @@ void receiverLoop() {
 		}
 	}
 }
-
-
-/*
-void receiverLoopNew(HANDLE* hComRx) {
-
-	printf("\nReceiver started. Listening for incoming messages...\n");
-
-	struct tm now = getTimeStruct(); //get the current time
-
-	while (listening) {
-		//hComRx = setupComPort(rxPortName, nComRate, nComBits, timeout); //setup Rx port
-
-		// Allocate space for a fresh header each cycle
-		Header* rxHeader = (Header*)malloc(sizeof(Header));
-		if (!rxHeader) {
-			printf("ERROR: Failed to allocate header.\n");
-			Sleep(1000);
-			continue;
-		}
-
-		//attempt to read the header
-		if (!readHeader(hComRx, rxHeader)) {
-			free(rxHeader);
-			Sleep(10); // Prevent CPU overuse
-			continue;
-		}
-
-		//prevent printing garbage
-		if (rxHeader->payloadSize <= 0 ||
-			rxHeader->payloadSize > 4096 ||
-			(rxHeader->payLoadType != 1 && rxHeader->payLoadType != 2))
-		{
-			// Invalid header, skip
-			free(rxHeader);
-			continue;
-		}
-
-		printf("\n===== INCOMING MESSAGE HEADER =====\n");
-		printf("Sender ID:     %d\n", rxHeader->sid);
-		printf("Receiver ID:   %d\n", rxHeader->rid);
-		printf("Priority:      %d\n", rxHeader->priority);
-		printf("Payload Size:  %ld bytes\n", rxHeader->payloadSize);
-		printf("Payload Type:  %d\n", rxHeader->payLoadType);
-		printf("Encryption:    %d\n", rxHeader->encryption);
-		printf("Compression:   %d\n", rxHeader->compression);
-		printf("===================================\n");
-
-		// Allocate buffer for payload
-		char* payload = (char*)malloc(rxHeader->payloadSize + 1);
-		if (!payload) {
-			printf("ERROR: Memory allocation failed.\n");
-			Sleep(5000);
-			break;
-		}
-
-		bytesRead = inputFromPort(hComRx, payload, rxHeader->payloadSize);
-		payload[bytesRead] = '\0';
-
-		// Handle text or audio based on type
-		if (rxHeader->payLoadType == 1) {
-			printf("(%02d:%02d:%02d) %s\n", now.tm_hour, now.tm_min, now.tm_sec, payload);
-
-			char choice;
-
-			do {
-				printf("\nDone reading? (y/n): ");
-				choice = getchar();
-				while (getchar() != '\n'); // clear input buffer
-			} while (choice != 'y' && choice != 'Y');
-
-
-			free(payload);
-			free(rxHeader);
-			clearScreen();
-
-
-			CloseHandle(hComRx);
-			purgePort(hComRx);
-
-
-		}
-		
-		else if (rxHeader->payLoadType == 2) {
-			printf("\nReceived Audio (%ld bytes) — Playing audio...\n", rxHeader->payloadSize);
-			//playAudio(payload, rxHeader.payloadSize); // Customize based on your audio code
-		}
-		else {
-			printf("Unknown payload type.\n");
-		}
-		
-
-		printf("Listening for next message...\n");
-	}
-}
-*/

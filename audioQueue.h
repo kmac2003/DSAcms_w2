@@ -56,6 +56,6 @@ void clearQueue();
 link peekQueue();
 void displayQueue();
 //enqueuing
-void enqueueAudio(short* buf, long size, const char* name);
+void enqueueAudioAndHdr(short* buf, long size, const char* name, Header* hdr);
 void enqueueTextAndHdr(const char* msg, const char* label, Header* header);
 

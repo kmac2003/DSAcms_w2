@@ -26,10 +26,10 @@ Comments:		Projects III - Coded Messaging System
 int nComRate = 460800;				// Baud (Bit) rate in bits/second 
 int nComBits = 8;					// Number of bits per frame
 COMMTIMEOUTS timeout = { 0 };		// A commtimeout struct variable
-char selection;													// Tx or Rx (can run two instances of this program - double click the exe file)
-Header txHeader;												// Header transmitted 
-Header rxHeader;												// Header received
-void* rxPayload = NULL;											// Received payload (buffer) - void so it can be any data type
+char selection;						// Tx or Rx (can run two instances of this program - double click the exe file)
+Header txHeader;					// Header transmitted 
+Header rxHeader;					// Header received
+void* rxPayload = NULL;				// Received payload (buffer) - void so it can be any data type
 int txPortNum;
 int rxPortNum;
 HANDLE hComRx;			//pointer to receiver com port

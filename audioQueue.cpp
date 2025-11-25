@@ -112,15 +112,19 @@ void displayQueue() {
 	printf("\n===============================\n");
 }
 
-//adds a new message to the queue
-void enqueueAudio(short* buf, long size, const char* name){
+//queues audio + header 
+void enqueueAudioAndHdr(short* buf, long size, const char* name, Header* hdr){
+	if (!buf || !hdr) {
+		return;
+	}
+
 	link newNode = (link)malloc(sizeof(Node));
 	if (newNode == NULL) {
 		printf("ERROR: malloc failed for queuing new node\n"); //check if malloc worked
 		return;
 	}
 
-	//copy message data into a new buffer
+	//copy audio buffer
 	newNode->Data.buffer = (short*)malloc(size * sizeof(short));
 	if (newNode->Data.buffer == NULL) {
 		printf("ERROR: malloc failed for message buffer\n");
@@ -130,22 +134,42 @@ void enqueueAudio(short* buf, long size, const char* name){
 
 	memcpy(newNode->Data.buffer, buf, size * sizeof(short)); //make this queue node hold its own copy of the recorded sound
 	newNode->Data.size = size;	
-	strncpy_s(newNode->Data.filename, MAX_FILENAME, name, _TRUNCATE); //store the label of this recording inside this queue node
-	newNode->pNext = NULL; //mark this node as the last in the queue for now
 
-	//link into the queue
-	if (isQueueEmpty()) {
-		front = rear = newNode;
+	//copy label
+	strncpy_s(newNode->Data.filename, MAX_FILENAME, name, _TRUNCATE); 
+
+	//copy header
+	newNode->Data.hdr = *hdr;
+
+	//no text for audio
+	newNode->Data.text = NULL;
+	newNode->Data.type = PAYLOAD_AUDIO;
+	newNode->pNext = NULL;
+
+	//insert into the queue based on priority
+	if (!front || hdr->priority < front->Data.hdr.priority) {
+		newNode->pNext = front;
+		front = newNode;
+		if (!rear) {
+			rear = newNode;
+		}		
 	}
 	else {
-		rear->pNext = newNode;
-		rear = newNode;
+		link current = front;
+		while (current->pNext && current->pNext->Data.hdr.priority <= hdr->priority) {
+			current = current->pNext;
+		}
+		newNode->pNext = current->pNext;
+		current->pNext = newNode;
+		if (!newNode->pNext) {
+			rear = newNode;
+		}
 	}
 	messageCount++;
-	printf("Message enqueued. Total messages: %d\n", messageCount);
+	printf("Audio queued with priority: %d. Queue size: %d\n", hdr->priority, messageCount);
 }
 
-//queues text with header only
+//queues text + header 
 void enqueueTextAndHdr(const char* msg, const char* label, Header *header) {
 	if (!msg) return;
 
@@ -200,7 +224,7 @@ void enqueueTextAndHdr(const char* msg, const char* label, Header *header) {
 		}
 	}
 	messageCount++;
-	printf("Queued text with piority: %d. Queue size: %d\n", header->priority, messageCount);
+	printf("Text queued with piority: %d. Queue size: %d\n", header->priority, messageCount);
 }
 
 

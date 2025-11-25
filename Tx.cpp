@@ -25,9 +25,8 @@ Comments:		Projects III - Coded Messaging System
 #include "compress.h"
 #include "encrypt.h"
 
-#define TEXT 1
-#define AUDIO 2
-
+#define AUDIO 1
+#define TEXT 2
 
 char msgOut[BUFSIZE];
 size_t len;
@@ -126,7 +125,7 @@ void composeHeaderLoop() {
 		cfg.PRIORITY = priority;
 		printf("\nPriority set to: %d\n\n", priority);
 
-		printf("Message type:\n1: Text\n2: Audio\n> ");
+		printf("Message type:\n1: Audio\n2: Text\n> ");
 
 		int choice = getInput();
 

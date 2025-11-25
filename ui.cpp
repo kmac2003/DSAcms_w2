@@ -37,25 +37,6 @@ struct tm getTimeStruct() {
 }
 
 //w1
-//record new audio and save it in the front of the queue
-void recordNew() {
-    system("cls");
-    char name[MAX_FILENAME];
-    printf("\nEnter a name for this recording: ");
-    scanf_s("%63s", name, (unsigned)_countof(name));
-    while (getchar() != '\n'); //flush input
-
-    RecordBuffer(iBigBuf, lBigBufSize);
-    CloseRecording();
-
-    printf("\nRecording complete!\n");
-    printf("Adding message '%s' to queue...\n", name);
-    enqueueAudio(iBigBuf, lBigBufSize, name);
-
-    //reopen recording device for the next recording
-    InitializeRecording();
-}
-
 //save the front message in the queue to file
 void saveFront(){
     if (isQueueEmpty()) {
