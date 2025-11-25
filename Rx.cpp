@@ -35,6 +35,7 @@ DWORD bytesRead = 0;
 DWORD totalRead = 0;
 int choice = 0;
 
+/*
 //read exact number of bytes from the com port
 int readBytes(HANDLE* hCom, void* buffer, DWORD bytesToRead){
 	while (totalRead < bytesToRead) {
@@ -68,6 +69,7 @@ int readPayload(HANDLE* hCom, void* buffer, long payloadSize){
 	}
 	return readBytes(hCom, buffer, (DWORD)payloadSize);
 }
+*/
 
 //**********************************************************************************    RECEIVING TEXTS
 //continuously receives and displays new text messages until user decides to stop
@@ -96,6 +98,48 @@ void rxInstantText(HANDLE* hComRx){
 		}
 		Sleep(100);
 	}
+}
+
+//receive header and text message
+void receiveTextMessage(HANDLE* hComRx) {
+	Header rxHeader;
+	void* rxPayload = NULL;
+	DWORD bytesRead;
+
+	// Receive header + payload using RS232Comm.cpp function
+	bytesRead = receive(&rxHeader, &rxPayload, hComRx);
+
+	if (bytesRead == 0 || rxPayload == NULL) {
+		printf("\nError: No data received.\n");
+		return;
+	}
+
+	// Ensure payload is null-terminated for safe printing
+	char* textMessage = (char*)rxPayload;
+	textMessage[rxHeader.payloadSize - 1] = '\0';
+
+	// Print header info
+	printf("\n===== RECEIVED MESSAGE HEADER =====\n");
+	printf("SID\t\t%d\n", rxHeader.sid);
+	printf("RID\t\t%d\n", rxHeader.rid);
+	printf("Priority\t%d\n", rxHeader.priority);
+	printf("Size\t\t%d\n", rxHeader.payloadSize);
+	printf("Msg Type\t%d\n", rxHeader.payLoadType);
+	printf("Encryption\t%d\n", rxHeader.encryption);
+	printf("Compression\t%d\n", rxHeader.compression);
+	printf("===================================\n");
+
+	// Print message content
+	struct tm now = getTimeStruct();
+	printf("(%02d:%02d:%02d) %s\n", now.tm_hour, now.tm_min, now.tm_sec, textMessage);
+
+	// Free the allocated payload buffer
+	free(rxPayload);
+
+	// Prompt user to continue
+	printf("\nPress Enter to continue...");
+	while (getchar() != '\n'); // wait for Enter
+	clearScreen();
 }
 
 //**********************************************************************************    RECEIVING AUDIO
@@ -137,101 +181,65 @@ void receiveAudioAndPlay(HANDLE* hComRx) {
 }
 
 //main transmitter branch loop
-void receiverLoop(HANDLE* hComRx){
-	int running = TRUE;
-	while (running) {
-		receivingMenu();
-		int Rx_choice = getInput();
+void receiverLoop() {
+	int receiving = TRUE;
 
-		switch (Rx_choice) {
-		case PLAY_TEXT:
-			rxInstantText(hComRx); //receive and play text messages
-			break;
+	// Build COM port name string
+	wchar_t rxPortName[10];
+	swprintf(rxPortName, 10, L"COM%d", cfg.COM_RX);
 
-		case PLAY_AUDIO:
-			receiveAudioAndPlay(hComRx);
-			break;
+	while (receiving) {
+		// Setup COM port each time the loop starts
+		HANDLE hComRx = setupComPort(rxPortName, nComRate, nComBits, timeout);
 
-		case SHOW_QUEUE:
-			choice = 0;
+		// Receiver menu loop
+		int inLoop = TRUE;
+		while (inLoop) {
+			receivingMenu();
+			int choice = getInput();
 
-			while (1) {
+			switch (choice) {
+			case LISTENING:
+				system("cls");
+				printf("\nReceiving...\n");
 
-				printf("\n1 - Receive and Queue 3 Random Quotes\n");
-				printf("2 - View Current Queue Entries\n");
-				printf("0 - Exit\n");
-				printf("Enter option: ");
-				scanf_s("%d", &choice);
+				receiveTextMessage(&hComRx);
+				//rxInstantText(&hComRx);      
+				break;
 
-				if (choice == 0) break;
+			case SEE_QUEUE:
+				//receiveAudioAndPlay(&hComRx);
+				break;
 
-				switch (choice) {
+			case Rx_GO_BACK:
+				goBack();
+				inLoop = FALSE;   // exit inner menu loop
+				break;
 
-				case 1: // Receive quotes and queue
-				{
-					for (int i = 0; i < 3; i++) {
-
-						char rxMsg[256] = { 0 };
-
-						BOOL ok = inputFromPort(hComRx, rxMsg, sizeof(rxMsg) - 1);
-
-						if (!ok) {
-							printf("\nRX Error reading quote %d!\n", i + 1);
-							break;
-						}
-
-						printf("\nRX <- Quote %d: %s\n", i + 1, rxMsg);
-
-						char label[32];
-						snprintf(label, sizeof(label), "Quote_%d", i + 1);
-
-						enqueueText(rxMsg, label);
-					}
-					break;
-				}
-
-				case 2: // Print queue contents
-				{
-					link node = peekQueue();
-					if (!node) {
-						printf("Queue is empty.\n");
-						break;
-					}
-
-					printf("\n--- QUEUE CONTENTS ---\n");
-					int index = 1;
-					while (node) {
-						// Print the actual string stored in the queue
-						printf("\n%d: \"%s\" (label: %s, size: %ld)\n",
-							index++,
-							node->Data.text,      // <-- assuming 'text' holds the queued string
-							node->Data.filename,  // optional label
-							node->Data.size);     // optional size
-						node = node->pNext;
-					}
-					break;
-				}
-
-				default:
-					printf("Invalid selection.\n");
-					break;
-				}
+			default:
+				invalid();
+				break;
 			}
-			break;
+		}
 
-		case Rx_GO_BACK:
-			goBack();
-			running = FALSE;
-			break;
+		// Teardown COM port after user exits menu
+		purgePort(&hComRx);
+		CloseHandle(hComRx);
+		hComRx = INVALID_HANDLE_VALUE;
 
-		default:
-			invalid();
-			break;
+		printf("\nReturn to receiver menu? (y/n): ");
+		char ch = getchar();
+		while (getchar() != '\n'); // flush input buffer
+		if (ch != 'y' && ch != 'Y') {
+			receiving = FALSE;
 		}
 	}
 }
 
+
+/*
 void receiverLoopNew(HANDLE* hComRx) {
+
 	printf("\nReceiver started. Listening for incoming messages...\n");
 
 	struct tm now = getTimeStruct(); //get the current time
@@ -308,7 +316,7 @@ void receiverLoopNew(HANDLE* hComRx) {
 
 
 		}
-		/*
+		
 		else if (rxHeader->payLoadType == 2) {
 			printf("\nReceived Audio (%ld bytes) — Playing audio...\n", rxHeader->payloadSize);
 			//playAudio(payload, rxHeader.payloadSize); // Customize based on your audio code
@@ -316,8 +324,9 @@ void receiverLoopNew(HANDLE* hComRx) {
 		else {
 			printf("Unknown payload type.\n");
 		}
-		*/
+		
 
 		printf("Listening for next message...\n");
 	}
 }
+*/

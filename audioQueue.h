@@ -19,20 +19,27 @@ Comments:		Projects III - Coded Messaging System
 #define MAX_MESSAGES 10 //max number of queued messages, 10 for now
 #define MAX_FILENAME 64 //maximum file name size
 
+typedef enum {
+    PAYLOAD_NONE = 0,
+    PAYLOAD_AUDIO = 1,
+    PAYLOAD_TEXT = 2
+} PayloadType;
+
 typedef struct item Item;
 typedef struct node Node;
 typedef Node* link;
 
 struct item {
-    short* buffer;                  // pointer to the audio samples
-    long size;                       // number of samples in the buffer
-    char filename[MAX_FILENAME];     // stores file name
-    char* text;                      // stores text messages (for text queue)
+    PayloadType type;              // audio or text
+    short* buffer;                 // pointer to audio samples
+    long size;                     // number of samples
+    char* text;                    // pointer to text string
+    char filename[MAX_FILENAME];   // message label / filename
 };
 
 struct node {
-	Item Data;						//holds message labels
-	link pNext;						//pointer to the next node
+    Item Data;                     // holds message info
+    link pNext;                    // pointer to next node
 };
 
 //global vars
@@ -43,7 +50,7 @@ extern int messageCount;
 //function definitions
 void initQueue();
 int isQueueEmpty();
-void enqueue(short* buf, long size, const char* name);
+void enqueueAudio(short* buf, long size, const char* name);
 link deQueue();
 void clearQueue();
 link peekQueue();

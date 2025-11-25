@@ -27,7 +27,7 @@ int isQueueEmpty(){
 }
 
 //adds a new message to the queue
-void enqueue(short* buf, long size, const char* name){
+void enqueueAudio(short* buf, long size, const char* name){
 	link newNode = (link)malloc(sizeof(Node));
 	if (newNode == NULL) {
 		printf("ERROR: malloc failed for queuing new node\n"); //check if malloc worked
@@ -60,21 +60,30 @@ void enqueue(short* buf, long size, const char* name){
 }
 
 //removes the first message node from the queue
-link deQueue(){
+link deQueue() {
 	if (isQueueEmpty()) {
 		printf("The queue is empty\n");
 		return NULL;
 	}
-	
+
 	link temp = front;
 	front = front->pNext;
 	if (front == NULL) {
 		rear = NULL;
 	}
 
+	// Free payload memory safely
+	if (temp->Data.type == PAYLOAD_AUDIO && temp->Data.buffer) {
+		free(temp->Data.buffer);
+	}
+	else if (temp->Data.type == PAYLOAD_TEXT && temp->Data.text) {
+		free(temp->Data.text);
+	}
+
 	messageCount--;
 	printf("Dequeued message. Remaining messages: %d\n", messageCount);
-	return temp;
+	free(temp);
+	return NULL; // Node has been freed; returning NULL for safety
 }
 
 //frees all queued messages

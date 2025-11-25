@@ -16,15 +16,16 @@ Comments:		Projects III - Coded Messaging System
 #include <Windows.h>
 #include "RS232Comm.h"
 
+/*
 int readBytes(HANDLE* hCom, void* buffer, DWORD bytesToRead);
 int readHeader(HANDLE* hCom, Header* hdr);
 int readPayload(HANDLE* hCom, void* buffer, long payLoadSize);
+*/
 
 //text
 void rxInstantText(HANDLE* hComRx);
+void receiveTextMessage(HANDLE* hComRx);
 //audio
 void receiveAudioAndPlay(HANDLE* hComRx);
 //main receiver loop
-void receiverLoop(HANDLE* hComRx);
-//new loop
-void receiverLoopNew(HANDLE* hComRx);
+void receiverLoop();

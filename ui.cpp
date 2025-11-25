@@ -153,10 +153,9 @@ int selectStation() {
 //selects what kind of message user wishes to receive
 void receivingMenu(){
     printf("\n============= RECEIVING STATION ================\n");
-    printf("1. Play recent text message\n");
-    printf("2. Play recent audio message\n");
-    printf("3. Show queue\n");
-    printf("4. Back");
+    printf("1. Listen for new messages\n");
+    printf("2. Show queue\n");
+    printf("3. Back");
     printf("\n===========================================================\n");
 }
 
@@ -203,7 +202,6 @@ void runModeLoop(){
     srand(time(NULL));
     
     wchar_t txPortName[10];
-    wchar_t rxPortName[10];
 
     loadConfig(CONFIG_FILE, &cfg);
 
@@ -213,7 +211,6 @@ void runModeLoop(){
         displayFullConfiguration();
         
         swprintf(txPortName, 10, L"COM%d", (txPortNum = cfg.COM_TX)); //formats PortNum into L"COM#"
-        swprintf(rxPortName, 10, L"COM%d", (rxPortNum = cfg.COM_RX));
 
         int mode = selectStation(); //users decide if this is transmitter or receiver
 
@@ -226,11 +223,7 @@ void runModeLoop(){
             break;
 
         case RECEIVER:
-            hComRx = setupComPort(rxPortName, nComRate, nComBits, timeout); //setup Rx port
-            receiverLoop(&hComRx); //run receiver menu loop
-            //receiverLoopNew(&hComRx); //receive headers
-            CloseHandle(hComRx);
-            purgePort(&hComRx);
+            receiverLoop(); //run receiver menu loop
             break;
 
         case TESTING:

@@ -42,7 +42,6 @@ int makingHeader = TRUE;
 int audioMsg = TRUE;
 
 
-
 //**********************************************************************************    SENDING TEXTS
 //creates and sends new text messages
 void instantTextMsg(HANDLE* hComTx){
@@ -76,7 +75,7 @@ void instantTextMsg(HANDLE* hComTx){
 }
 
 //send text messages with a header
-void sendTextWithHeader(HANDLE* hComTx) {
+void sendTextWithHeader(HANDLE* hComTx){
 	char msgOut[BUFSIZE];
 	size_t len;
 
@@ -93,12 +92,16 @@ void sendTextWithHeader(HANDLE* hComTx) {
 		return;
 
 	// Build header automatically based on text payload
-	Header txHeader = buildHeader(len + 1, cfg.MSGTYPE); //
+	Header txHeader = buildHeader(len + 1, cfg.MSGTYPE);
 
 	// Send everything using your existing function
 	transmit(&txHeader, msgOut, hComTx);
 
 	printf("\nText Message Sent!\n");
+
+	// Prompt user to continue
+	printf("\nPress Enter to continue...");
+	while (getchar() != '\n'); // wait for Enter
 }
 
 //create the outgoing header
@@ -130,7 +133,6 @@ void composeHeaderLoop() {
 		if (choice == TEXT) {
 			printf("\nText message selected.\n");
 			cfg.MSGTYPE = 1;  // Text
-
 			sendTextWithHeader(&hComTx);
 		}
 		else if (choice == AUDIO) {
