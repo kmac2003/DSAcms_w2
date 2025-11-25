@@ -19,7 +19,6 @@ Comments:		Projects III - Coded Messaging System
 #include "ui.h"
 #include "RS232Comm.h"
 #include "sound.h"
-#include "audioQueue.h"
 #include "config.h"
 #include "compress.h"
 #include "encrypt.h"
@@ -192,7 +191,6 @@ HANDLE setupComPort(const wchar_t* portName, int nComRate, int nComBits, COMMTIM
 }
 
 //w5
-
 //header construction
 Header buildHeader(long payloadSize, char payloadType) {
 	Header h;

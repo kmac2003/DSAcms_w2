@@ -19,8 +19,8 @@ Comments:		Projects III - Coded Messaging System
 #include "Rx.h"
 #include "ui.h"
 #include "RS232Comm.h"
-#include "sound.h"
 #include "audioQueue.h"
+#include "sound.h"
 #include "config.h"
 #include "compress.h"
 #include "encrypt.h"
@@ -50,7 +50,7 @@ void recordNew() {
 
     printf("\nRecording complete!\n");
     printf("Adding message '%s' to queue...\n", name);
-    enqueue(iBigBuf, lBigBufSize, name);
+    enqueueAudio(iBigBuf, lBigBufSize, name);
 
     //reopen recording device for the next recording
     InitializeRecording();

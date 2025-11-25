@@ -19,11 +19,11 @@ Comments:		Projects III - Coded Messaging System
 #define MAX_MESSAGES 10 //max number of queued messages, 10 for now
 #define MAX_FILENAME 64 //maximum file name size
 
-typedef enum {
+typedef enum PayloadType {
     PAYLOAD_NONE = 0,
     PAYLOAD_AUDIO = 1,
     PAYLOAD_TEXT = 2
-} PayloadType;
+};
 
 typedef struct item Item;
 typedef struct node Node;
@@ -35,6 +35,7 @@ struct item {
     long size;                     // number of samples
     char* text;                    // pointer to text string
     char filename[MAX_FILENAME];   // message label / filename
+    Header hdr;                    // store header
 };
 
 struct node {
@@ -47,12 +48,14 @@ extern link front;
 extern link rear;
 extern int messageCount;
 
-//function definitions
+//general queue funcs
 void initQueue();
 int isQueueEmpty();
-void enqueueAudio(short* buf, long size, const char* name);
 link deQueue();
 void clearQueue();
 link peekQueue();
+void displayQueue();
+//enqueuing
+void enqueueAudio(short* buf, long size, const char* name);
+void enqueueTextAndHdr(const char* msg, const char* label, Header* header);
 
-void enqueueText(const char* msg, const char* label);

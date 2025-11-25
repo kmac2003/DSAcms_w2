@@ -10,6 +10,7 @@ Comments:		Projects III - Coded Messaging System
 
 ==========================================================================================================================
 */
+#include "RS232Comm.h"
 #include "audioQueue.h"
 
 link front = NULL;
@@ -24,6 +25,91 @@ void initQueue(){
 //checks if the queue is empty
 int isQueueEmpty(){
 	return (front == NULL);
+}
+
+//removes the first message node from the queue
+link deQueue() {
+	if (isQueueEmpty()) {
+		printf("Queue is empty — nothing to dequeue.\n");
+		return NULL;
+	}
+
+	link temp = front;
+	front = front->pNext;
+
+	if (front == NULL) {
+		rear = NULL;
+	}
+
+	temp->pNext = NULL;
+	messageCount--;
+
+	printf("Dequeued message. Remaining: %d\n", messageCount);
+	return temp; // Caller now responsible for freeing message memory!
+}
+
+//frees all queued messages
+void clearQueue(){
+	while (!isQueueEmpty()) {
+		link temp = deQueue();
+		if (temp) {
+			free(temp->Data.buffer);
+			free(temp);
+		}
+	}
+}
+
+//returns a pointer to front node without removing
+link peekQueue() {
+	if (isQueueEmpty()) {
+		printf("Queue is empty\n");
+		return NULL;
+	}
+	return front;
+}
+
+//display queue contents
+void displayQueue() {
+	if (isQueueEmpty()) {
+		printf("\nQueue is empty.\n");
+		return;
+	}
+
+	printf("\n========== FULL QUEUE ==========\n");
+
+	link current = front;
+	int index = 1;
+
+	while (current != NULL) {
+		printf("\nMessage #%d\n", index++);
+		if (current->Data.type == PAYLOAD_TEXT) {
+			printf("Type       : Text\n");
+			printf("Filename   : %s\n", current->Data.filename);
+			if (current->Data.text)
+				printf("Message    : %s\n", current->Data.text);
+		}
+		else if (current->Data.type == PAYLOAD_AUDIO) {
+			printf("Type       : Audio\n");
+			printf("Filename   : %s\n", current->Data.filename);
+			printf("Samples    : %ld\n", current->Data.size);
+		}
+		else {
+			printf("Type       : Unknown\n");
+		}
+
+		// Print header info if available
+		printf("SID        : %d\n", current->Data.hdr.sid);
+		printf("RID        : %d\n", current->Data.hdr.rid);
+		printf("Priority   : %d\n", current->Data.hdr.priority);
+		printf("PayloadSz  : %ld\n", current->Data.hdr.payloadSize);
+		printf("MsgType    : %d\n", current->Data.hdr.payLoadType);
+		printf("Encryption : %d\n", current->Data.hdr.encryption);
+		printf("Compression: %d\n", current->Data.hdr.compression);
+
+		current = current->pNext;
+	}
+
+	printf("\n===============================\n");
 }
 
 //adds a new message to the queue
@@ -59,55 +145,8 @@ void enqueueAudio(short* buf, long size, const char* name){
 	printf("Message enqueued. Total messages: %d\n", messageCount);
 }
 
-//removes the first message node from the queue
-link deQueue() {
-	if (isQueueEmpty()) {
-		printf("The queue is empty\n");
-		return NULL;
-	}
-
-	link temp = front;
-	front = front->pNext;
-	if (front == NULL) {
-		rear = NULL;
-	}
-
-	// Free payload memory safely
-	if (temp->Data.type == PAYLOAD_AUDIO && temp->Data.buffer) {
-		free(temp->Data.buffer);
-	}
-	else if (temp->Data.type == PAYLOAD_TEXT && temp->Data.text) {
-		free(temp->Data.text);
-	}
-
-	messageCount--;
-	printf("Dequeued message. Remaining messages: %d\n", messageCount);
-	free(temp);
-	return NULL; // Node has been freed; returning NULL for safety
-}
-
-//frees all queued messages
-void clearQueue(){
-	while (!isQueueEmpty()) {
-		link temp = deQueue();
-		if (temp) {
-			free(temp->Data.buffer);
-			free(temp);
-		}
-	}
-}
-
-//returns a pointer to front node without removing
-link peekQueue() {
-	if (isQueueEmpty()) {
-		printf("Queue is empty\n");
-		return NULL;
-	}
-	return front;
-}
-
-//queues text only
-void enqueueText(const char* msg, const char* label) {
+//queues text with header only
+void enqueueTextAndHdr(const char* msg, const char* label, Header *header) {
 	if (!msg) return;
 
 	link newNode = (link)malloc(sizeof(Node));
@@ -115,6 +154,12 @@ void enqueueText(const char* msg, const char* label) {
 		printf("Error: Failed to allocate memory for queue node.\n");
 		return;
 	}
+
+	//fill node data
+	newNode->Data.type = PAYLOAD_TEXT;
+	newNode->Data.buffer = NULL;
+	newNode->Data.size = 0;
+	newNode->Data.hdr = *header;
 
 	// Copy text string
 	size_t len = strlen(msg);
@@ -135,14 +180,27 @@ void enqueueText(const char* msg, const char* label) {
 
 	newNode->pNext = NULL;
 
-	// Insert into queue
-	if (!rear) { // empty queue
-		front = rear = newNode;
+	// priority sorting insert
+	if (isQueueEmpty() || header->priority < front->Data.hdr.priority) {
+		newNode->pNext = front;
+		front = newNode;
+		if (!rear) {
+			rear = newNode;
+		}
 	}
 	else {
-		rear->pNext = newNode;
-		rear = newNode;
+		link current = front;
+		while (current->pNext && current->pNext->Data.hdr.priority <= header->priority) {
+			current = current->pNext;
+		}
+		newNode->pNext = current->pNext;
+		current->pNext = newNode;
+		if (current == rear) {
+			rear = newNode;
+		}
 	}
-
 	messageCount++;
+	printf("Queued text with piority: %d. Queue size: %d\n", header->priority, messageCount);
 }
+
+

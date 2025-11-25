@@ -11,12 +11,10 @@ Comments:		Projects III - Coded Messaging System
 ==========================================================================================================================
 */
 #pragma once
+#include <Windows.h>
 
 #define EX_FATAL 1
 #define BUFSIZE 140
-
-//w5
-
 
 //w5
 typedef struct Header {

@@ -126,18 +126,19 @@ void composeHeaderLoop() {
 		cfg.PRIORITY = priority;
 		printf("\nPriority set to: %d\n\n", priority);
 
-		printf("Message type:\n1 = Text\n2 = Audio\n> ");
+		printf("Message type:\n1: Text\n2: Audio\n> ");
 
 		int choice = getInput();
 
 		if (choice == TEXT) {
 			printf("\nText message selected.\n");
-			cfg.MSGTYPE = 1;  // Text
+			cfg.MSGTYPE = TEXT;  // Text
 			sendTextWithHeader(&hComTx);
 		}
 		else if (choice == AUDIO) {
 			printf("\nAudio message selected.\n");
-			cfg.MSGTYPE = 2;  // Audio
+			cfg.MSGTYPE = AUDIO;  // Audio
+			recordAndSendAudio(&hComTx);
 		}
 		else {
 			invalid();
@@ -157,7 +158,6 @@ void composeHeaderLoop() {
 //**********************************************************************************    SENDING AUDIO
 //record and send new audio message
 void recordAndSendAudio(HANDLE* hComTx) {
-	Header txHeader;
 
 	//initialize recording
 	if (!InitializeRecording()) {
@@ -173,8 +173,7 @@ void recordAndSendAudio(HANDLE* hComTx) {
 	printf("\n\nRecording complete. (%ld samples)\n", lBigBufSize);
 
 	//prepare header
-	txHeader.payLoadType = 'A';  // 'A' for audio
-	txHeader.payloadSize = lBigBufSize * sizeof(short);
+	Header txHeader = buildHeader(lBigBufSize * sizeof(short), AUDIO);
 
 	//send header and payload
 	printf("Sending audio clip (%ld bytes)...\n", txHeader.payloadSize);

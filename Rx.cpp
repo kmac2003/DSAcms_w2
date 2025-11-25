@@ -133,6 +133,11 @@ void receiveTextMessage(HANDLE* hComRx) {
 	struct tm now = getTimeStruct();
 	printf("(%02d:%02d:%02d) %s\n", now.tm_hour, now.tm_min, now.tm_sec, textMessage);
 
+	//enqueue the text message and header
+	char label[MAX_FILENAME];
+	snprintf(label, MAX_FILENAME, "Msg P%d", rxHeader.priority);
+	enqueueTextAndHdr(textMessage, label, &rxHeader);
+
 	// Free the allocated payload buffer
 	free(rxPayload);
 
@@ -205,10 +210,14 @@ void receiverLoop() {
 
 				receiveTextMessage(&hComRx);
 				//rxInstantText(&hComRx);      
+				//receiveAudioAndPlay(&hComRx);
 				break;
 
 			case SEE_QUEUE:
-				//receiveAudioAndPlay(&hComRx);
+				displayQueue();
+				printf("\nPress Enter to continue...");
+				while (getchar() != '\n'); // wait for user
+				clearScreen();
 				break;
 
 			case Rx_GO_BACK:
