@@ -133,7 +133,7 @@ void sendQuotes(HANDLE* hComTx) {
 
     while (1) {
 
-        printf("1 - Send 3 Random Quotes\n");
+        printf("\n1 - Send 3 Random Quotes\n");
         printf("0 - Exit\n");
         printf("Enter option: ");
         scanf_s("%d", &newchoice);

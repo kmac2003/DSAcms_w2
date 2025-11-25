@@ -99,13 +99,41 @@ link peekQueue() {
 
 //queues text only
 void enqueueText(const char* msg, const char* label) {
-	long size = strlen(msg) + 1;
-	short* buf = (short*)malloc(size * sizeof(short));
-	if (!buf) return;
+	if (!msg) return;
 
-	for (int i = 0; i < size; i++)
-		buf[i] = (short)msg[i]; // Store ASCII as short
+	link newNode = (link)malloc(sizeof(Node));
+	if (!newNode) {
+		printf("Error: Failed to allocate memory for queue node.\n");
+		return;
+	}
 
-	enqueue(buf, size, label);
-	free(buf);
+	// Copy text string
+	size_t len = strlen(msg);
+	newNode->Data.text = (char*)malloc(len + 1);
+	if (!newNode->Data.text) {
+		printf("Error: Failed to allocate memory for text.\n");
+		free(newNode);
+		return;
+	}
+	strcpy_s(newNode->Data.text, len + 1, msg);
+
+	// Copy label
+	strncpy_s(newNode->Data.filename, MAX_FILENAME, label, _TRUNCATE);
+
+	// No audio for text, set buffer and size to 0
+	newNode->Data.buffer = NULL;
+	newNode->Data.size = 0;
+
+	newNode->pNext = NULL;
+
+	// Insert into queue
+	if (!rear) { // empty queue
+		front = rear = newNode;
+	}
+	else {
+		rear->pNext = newNode;
+		rear = newNode;
+	}
+
+	messageCount++;
 }

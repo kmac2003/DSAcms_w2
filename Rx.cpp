@@ -153,12 +153,11 @@ void receiverLoop(HANDLE* hComRx){
 			break;
 
 		case SHOW_QUEUE:
-
 			choice = 0;
 
 			while (1) {
-				
-				printf("1 - Receive and Queue 3 Random Quotes\n");
+
+				printf("\n1 - Receive and Queue 3 Random Quotes\n");
 				printf("2 - View Current Queue Entries\n");
 				printf("0 - Exit\n");
 				printf("Enter option: ");
@@ -173,17 +172,15 @@ void receiverLoop(HANDLE* hComRx){
 					for (int i = 0; i < 3; i++) {
 
 						char rxMsg[256] = { 0 };
-						DWORD bytesRead = 0;
 
-						//BOOL ok = ReadFile(*hComRx, rxMsg, sizeof(rxMsg), &bytesRead, NULL);
-						BOOL ok = inputFromPort(hComRx, msgIn, BUFSIZE - 1);
+						BOOL ok = inputFromPort(hComRx, rxMsg, sizeof(rxMsg) - 1);
 
 						if (!ok) {
-							printf("RX Error reading quote %d!\n", i + 1);
+							printf("\nRX Error reading quote %d!\n", i + 1);
 							break;
 						}
 
-						printf("RX <- Quote %d: %s\n", i + 1, rxMsg);
+						printf("\nRX <- Quote %d: %s\n", i + 1, rxMsg);
 
 						char label[32];
 						snprintf(label, sizeof(label), "Quote_%d", i + 1);
@@ -204,8 +201,12 @@ void receiverLoop(HANDLE* hComRx){
 					printf("\n--- QUEUE CONTENTS ---\n");
 					int index = 1;
 					while (node) {
-						printf("%d: %s (size %ld)\n",
-							index++, node->Data.filename, node->Data.size);
+						// Print the actual string stored in the queue
+						printf("\n%d: \"%s\" (label: %s, size: %ld)\n",
+							index++,
+							node->Data.text,      // <-- assuming 'text' holds the queued string
+							node->Data.filename,  // optional label
+							node->Data.size);     // optional size
 						node = node->pNext;
 					}
 					break;
@@ -236,8 +237,8 @@ void receiverLoopNew(HANDLE* hComRx) {
 	struct tm now = getTimeStruct(); //get the current time
 
 	while (listening) {
-		
-		purgePort(hComRx);
+		//hComRx = setupComPort(rxPortName, nComRate, nComBits, timeout); //setup Rx port
+
 		// Allocate space for a fresh header each cycle
 		Header* rxHeader = (Header*)malloc(sizeof(Header));
 		if (!rxHeader) {
@@ -300,6 +301,11 @@ void receiverLoopNew(HANDLE* hComRx) {
 			free(payload);
 			free(rxHeader);
 			clearScreen();
+
+
+			CloseHandle(hComRx);
+			purgePort(hComRx);
+
 
 		}
 		/*

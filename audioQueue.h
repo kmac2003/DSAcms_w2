@@ -24,9 +24,10 @@ typedef struct node Node;
 typedef Node* link;
 
 struct item {
-	short* buffer;					//pointer to the audio samples
-	long size;						//number of samples in the buffer
-	char filename[MAX_FILENAME];	//stores file name
+    short* buffer;                  // pointer to the audio samples
+    long size;                       // number of samples in the buffer
+    char filename[MAX_FILENAME];     // stores file name
+    char* text;                      // stores text messages (for text queue)
 };
 
 struct node {
