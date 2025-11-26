@@ -3,20 +3,14 @@
 
 Program Name:   EECE72405-25F
 Author:			KIEN MACARTNEY
-Date:           NOV 11 2025
+Date:           NOV 25 2025
 Comments:		Projects III - Coded Messaging System
 
-				Testing header file
+				Phonebook header file
 
 ==========================================================================================================================
 */
 #pragma once
+#include <Windows.h>
 
-void huffmanDemo();
-void stripNewline(char* s);
-void xorDemo();
-void testingLoop(HANDLE* hComTx);
-//error testing
-unsigned char computeChecksum(const char* data, int length);
-void introduceBitErrors(char* data, int length, float errorRate = 0.05f);
-void sendCorruptedQuote(HANDLE* hComTx);
+void logHeaderToPhonebook(Header* h);

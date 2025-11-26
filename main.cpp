@@ -33,6 +33,7 @@ Comments:		Projects III - Coded Messaging System
 int	main() {
 
 	//initalization
+	srand(time(NULL));
 	initQueue();
 	InitializePlayback();
 	InitializeRecording();

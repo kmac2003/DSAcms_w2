@@ -20,6 +20,7 @@ Comments:		Projects III - Coded Messaging System
 void receiveMessage(HANDLE* hComRx);
 //text
 void rxInstantText(HANDLE* hComRx);
+bool validateReceivedPayload(char* data, int length);
 //void receiveTextMessage(HANDLE* hComRx);
 //audio
 //void receiveAudioAndPlay(HANDLE* hComRx);

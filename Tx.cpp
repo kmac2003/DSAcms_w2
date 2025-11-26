@@ -25,6 +25,7 @@ Comments:		Projects III - Coded Messaging System
 #include "compress.h"
 #include "encrypt.h"
 #include "settings.h"
+#include "phonebook.h"
 
 char msgOut[BUFSIZE];
 size_t len;
@@ -110,13 +111,12 @@ void sendTextWithHeader(HANDLE* hComTx) {
 
 	// Transmit header + payload
 	transmit(&txHeader, payload, hComTx);
-
 	printf("\nText message sent!\n");
+	logHeaderToPhonebook(&txHeader);
 
 	if (cfg.COMPRESS == RLE || cfg.COMPRESS == HUFFMAN) { //if compression is used, free the payload
 		delete[] payload;
 	}
-
 	enterToContinue();
 }
 
@@ -160,6 +160,7 @@ void recordAndSendAudio(HANDLE* hComTx) {
 
 	printf("Sending audio clip...\n");
 	transmit(&txHeader, payload, hComTx);
+	logHeaderToPhonebook(&txHeader);
 
 	if (cfg.COMPRESS == RLE || cfg.COMPRESS == HUFFMAN) {
 		delete[] payload;

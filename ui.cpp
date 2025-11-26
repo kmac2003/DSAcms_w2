@@ -189,7 +189,6 @@ void testingMenu() {
 //**********************************************************************************    CORE LOOP
 //runs the core Tx/Rx system
 void runModeLoop(){
-    srand(time(NULL));
     
     wchar_t txPortName[10];
 

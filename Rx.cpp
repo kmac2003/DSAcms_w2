@@ -25,6 +25,7 @@ Comments:		Projects III - Coded Messaging System
 #include "compress.h"
 #include "encrypt.h"
 #include "settings.h"
+#include "testing.h"
 
 //variables
 char msgIn[BUFSIZE];
@@ -80,6 +81,20 @@ void receiveMessage(HANDLE* hComRx){
 	printf("===================================\n");
 
 	struct tm now = getTimeStruct();
+
+	//check for errors if err detect is on
+	if (cfg.ERR_DTCT == ON) {
+		bool ok = validateReceivedPayload((char*)rxPayload, rxHeader.payloadSize);
+
+		if (!ok) {
+			printf("Payload rejected due to checksum error.\n");
+
+			// drop the payload:
+			free(rxPayload);
+			enterToContinue();
+			return;
+		}
+	}
 
 	if (rxHeader.payLoadType == PAYLOAD_TEXT) {
 		// Ensure null-terminated string
@@ -149,6 +164,20 @@ void rxInstantText(HANDLE* hComRx){
 		}
 		Sleep(100);
 	}
+}
+
+//validate the checksum
+bool validateReceivedPayload(char* data, int length) {
+	unsigned char receivedChecksum = (unsigned char)data[length - 1];
+	unsigned char computed = computeChecksum(data, length - 1);
+
+	if (computed != receivedChecksum) {
+		printf("!!! ERROR: Checksum mismatch !!!\n");
+		printf("Expected: %u | Got: %u\n", receivedChecksum, computed);
+		return false;
+	}
+	printf("Checksum OK — No transmission errors.\n");
+	return true;
 }
 
 /*

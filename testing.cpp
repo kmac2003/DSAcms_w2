@@ -128,36 +128,55 @@ void xorDemo() {
 	clearScreen();
 }
 
-void sendQuotes(HANDLE* hComTx) {
-    newchoice = 0;
+//error testing
+unsigned char computeChecksum(const char* data, int length) {
+    unsigned int sum = 0;
+    for (int i = 0; i < length; i++) {
+        sum += (unsigned char)data[i];
+    }
+    return (unsigned char)(sum & 0xFF); // modulo 256
+}
 
-    while (1) {
-
-        printf("\n1 - Send 3 Random Quotes\n");
-        printf("0 - Exit\n");
-        printf("Enter option: ");
-        scanf_s("%d", &newchoice);
-
-        if (newchoice == 0) break;
-
-        switch (newchoice) {
-
-        case 1: // Send 3 random quotes
-            for (int i = 0; i < 3; i++) {
-                getRandQuote(currQuote);
-                char* quote = currQuote;
-
-                outputToPort(hComTx, (char*)quote, strlen(quote) + 1); // +1 includes null terminator
-
-                Sleep(200); // Avoid merging messages over UART
-            }
-            break;
-
-        default:
-            printf("Invalid selection.\n");
-            break;
+void introduceBitErrors(char* data, int length, float errorRate) {
+    for (int i = 0; i < length; i++) {
+        if ((float)rand() / RAND_MAX < errorRate) {
+            unsigned char bit = 1 << (rand() % 8);
+            data[i] ^= bit;
         }
     }
+}
+
+void sendCorruptedQuote(HANDLE* hComTx) {
+    // STEP 1: Get a random quote from fileIO
+    getRandQuote(currQuote);
+    char* quote = currQuote;
+    if (!quote) {
+        printf("Error: Could not load quote.\n");
+        return;
+    }
+
+    int payloadSize = strlen(quote);
+
+    // STEP 2: Compute checksum BEFORE corruption
+    unsigned char checksum = computeChecksum(quote, payloadSize);
+
+    // Append checksum to end
+    char* messageWithChecksum = (char*)malloc(payloadSize + 2);
+    memcpy(messageWithChecksum, quote, payloadSize);
+    messageWithChecksum[payloadSize] = checksum;
+    messageWithChecksum[payloadSize + 1] = '\0';
+
+    // STEP 3: Introduce bit errors INTO payload ONLY
+    introduceBitErrors(messageWithChecksum, payloadSize);
+
+    printf("\n>>> Sending QUOTE with Forced Errors\n");
+    printf("Original Checksum: %u\n", checksum);
+
+    // STEP 4: Transmit using your serial function
+    Header txHeader = buildHeader(payloadSize, TEXT);
+    transmit(&txHeader, (unsigned char*)messageWithChecksum, hComTx);
+
+    free(messageWithChecksum);
 }
 
 //switch case for all testing functions
@@ -178,10 +197,10 @@ void testingLoop(HANDLE* hComTx) {
             break;
 
         case SORTING_QUEUE:
-            sendQuotes(hComTx);
             break;
 
         case ERROR_DETECT:
+            sendCorruptedQuote(hComTx);
             break;
 
         case ENCRYPT_DECRPYT:

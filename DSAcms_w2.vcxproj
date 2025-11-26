@@ -133,6 +133,7 @@
     <ClCompile Include="encrypt.cpp" />
     <ClCompile Include="fileIO.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="phonebook.cpp" />
     <ClCompile Include="RS232Comm.cpp" />
     <ClCompile Include="Rx.cpp" />
     <ClCompile Include="settings.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="encrypt.h" />
     <ClInclude Include="fileIO.h" />
+    <ClInclude Include="phonebook.h" />
     <ClInclude Include="RS232Comm.h" />
     <ClInclude Include="Rx.h" />
     <ClInclude Include="settings.h" />

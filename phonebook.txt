@@ -1,0 +1,10 @@
+% [2025-11-25 23:00:03]
+SID		1
+RID		43
+Priority	3
+Size		7 bytes
+PayloadType	TEXT
+Encryption	OFF
+Compression	OFF
+-----------------------------------
+
