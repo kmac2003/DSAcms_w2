@@ -22,9 +22,10 @@ typedef struct Header {
 	short int rid;
 	int priority;
 	long int payloadSize;		//Number of bytes in payload after this header
-	int payLoadType;			//1: Text, 2: Audio
+	int payLoadType;			//2: Text, 1: Audio
 	int encryption;				//0: OFF, 1: XOR, 2: Vigenere
 	int compression;			//0: OFF, 1: RLE, 2: Huffman
+	int err_dtct;
 };
 
 extern int nComRate;			// Baud (Bit) rate in bits/second 

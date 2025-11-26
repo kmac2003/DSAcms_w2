@@ -7,7 +7,7 @@ Implemented:    KIEN MACARTNEY
 Date:           NOV 11 2025
 Comments:		Projects III - Coded Messaging System
 
-				Huffman compression implementation file
+				Huffman / RLE compression implementation file
 
 ==========================================================================================================================
 */
@@ -33,3 +33,9 @@ int RLE_Decode(unsigned char* in, unsigned int inlen, unsigned char* out, unsign
 // File wrapper functions
 void rle_compress_file(const char* input_file, const char* output_file);
 void rle_decompress_file(const char* input_file, const char* output_file);
+
+//w6
+int compressTextRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);
+int decompressTextRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);
+int compressAudioRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);
+int decompressAudioRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);

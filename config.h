@@ -18,6 +18,7 @@ typedef struct Config {
 	int COM_TX;
 	int COM_RX;
 	int HEADERS;
+	int ERR_DTCT;
 	int ENCRYPT;
 	int COMPRESS;
 	int SID;

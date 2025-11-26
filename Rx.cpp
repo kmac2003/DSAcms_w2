@@ -24,6 +24,7 @@ Comments:		Projects III - Coded Messaging System
 #include "config.h"
 #include "compress.h"
 #include "encrypt.h"
+#include "settings.h"
 
 //variables
 char msgIn[BUFSIZE];
@@ -50,9 +51,32 @@ void receiveMessage(HANDLE* hComRx){
 	printf("RID\t\t%d\n", rxHeader.rid);
 	printf("Priority\t%d\n", rxHeader.priority);
 	printf("Size\t\t%d\n", rxHeader.payloadSize);
-	printf("Msg Type\t%d\n", rxHeader.payLoadType);
-	printf("Encryption\t%d\n", rxHeader.encryption);
-	printf("Compression\t%d\n", rxHeader.compression);
+	if (rxHeader.payLoadType == AUDIO) {
+		printf("PayloadType\tAUDIO\n");
+	}
+	else {
+		printf("PayloadType\tTEXT\n");
+	}
+
+	if (rxHeader.encryption == XOR) {
+		printf("Encryption\tXOR\n");
+	}
+	else if (rxHeader.encryption == VIGENERE) {
+		printf("Encryption\tVIGENERE\n");
+	}
+	else {
+		printf("Encryption\tOFF\n");
+	}
+
+	if (rxHeader.compression == RLE) {
+		printf("Compression\tRLE\n");
+	}
+	else if (rxHeader.compression == HUFFMAN) {
+		printf("Compression\tHUFFMAN\n");
+	}
+	else {
+		printf("Compression\tOFF\n");
+	}
 	printf("===================================\n");
 
 	struct tm now = getTimeStruct();
@@ -96,9 +120,7 @@ void receiveMessage(HANDLE* hComRx){
 	free(rxPayload);
 
 	// Prompt user to continue
-	printf("\nPress Enter to continue...");
-	while (getchar() != '\n');
-	clearScreen();
+	enterToContinue();
 }
 
 //continuously receives and displays new text messages until user decides to stop
@@ -236,19 +258,20 @@ void receiverLoop() {
 			int choice = getInput();
 
 			switch (choice) {
+			case Rx_INSTANT:
+				rxInstantText(&hComRx);
+				break;
+
 			case LISTENING:
 				system("cls");
 				printf("\nReceiving...\n");
 
 				receiveMessage(&hComRx);
-				//rxInstantText(&hComRx);
 				break;
 
 			case SEE_QUEUE:
 				displayQueue();
-				printf("\nPress Enter to continue...");
-				while (getchar() != '\n'); // wait for user
-				clearScreen();
+				enterToContinue();
 				break;
 
 			case Rx_GO_BACK:

@@ -101,4 +101,7 @@
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="phonebook.txt" />
+  </ItemGroup>
 </Project>

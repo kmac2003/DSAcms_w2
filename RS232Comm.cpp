@@ -22,6 +22,7 @@ Comments:		Projects III - Coded Messaging System
 #include "config.h"
 #include "compress.h"
 #include "encrypt.h"
+#include "settings.h"
  
 int nComRate = 460800;				// Baud (Bit) rate in bits/second 
 int nComBits = 8;					// Number of bits per frame
@@ -205,13 +206,36 @@ Header buildHeader(long payloadSize, char payloadType) {
 	h.compression = cfg.COMPRESS;
 
 	printf("\n--- Auto-Generated Message Header ---\n");
-	printf("SID:         %d\n", h.sid);
-	printf("RID:         %d\n", h.rid);
-	printf("Priority:    %d\n", h.priority);
-	printf("PayloadSize: %ld\n", h.payloadSize);
-	printf("PayloadType: %d\n", h.payLoadType);
-	printf("Encryption:  %d\n", h.encryption);
-	printf("Compression: %d\n", h.compression);
+	printf("SID\t\t%d\n", h.sid);
+	printf("RID\t\t%d\n", h.rid);
+	printf("Priority\t%d\n", h.priority);
+	printf("Size\t\t%ld bytes\n", h.payloadSize);
+	if (h.payLoadType == AUDIO) {
+		printf("PayloadType\tAUDIO\n");
+	}
+	else {
+		printf("PayloadType\tTEXT\n");
+	}
+
+	if (h.encryption == XOR) {
+		printf("Encryption\tXOR\n");
+	}
+	else if (h.encryption == VIGENERE) {
+		printf("Encryption\tVIGENERE\n");
+	}
+	else {
+		printf("Encryption\tOFF\n");
+	}
+
+	if (h.compression == RLE) {
+		printf("Compression\tRLE\n");
+	}
+	else if (h.compression == HUFFMAN) {
+		printf("Compression\tHUFFMAN\n");
+	}
+	else {
+		printf("Compression\tOFF\n");
+	}
 	printf("-----------------------------------\n\n");
 
 	return h;

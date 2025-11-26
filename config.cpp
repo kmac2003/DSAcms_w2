@@ -51,6 +51,7 @@ int loadConfig(const char* filename, Config* cfg) {
             if (strcmp(key, "COM_TX") == 0)     cfg->COM_TX = value;
             else if (strcmp(key, "COM_RX") == 0)     cfg->COM_RX = value;
             else if (strcmp(key, "HEADERS") == 0)    cfg->HEADERS = value;
+            else if (strcmp(key, "ERR_DTCT") == 0)     cfg->ERR_DTCT = value;
             else if (strcmp(key, "ENCRYPT") == 0)    cfg->ENCRYPT = value;
             else if (strcmp(key, "COMPRESS") == 0)   cfg->COMPRESS = value;
             else if (strcmp(key, "SID") == 0)        cfg->SID = value;
@@ -76,6 +77,7 @@ int saveConfig(const char* filename, const Config* cfg) {
     fprintf(fp, "COM_TX=%d\n", cfg->COM_TX);
     fprintf(fp, "COM_RX=%d\n", cfg->COM_RX);
     fprintf(fp, "HEADERS=%d\n", cfg->HEADERS);
+    fprintf(fp, "ERR_DTCT=%d\n", cfg->ERR_DTCT);
     fprintf(fp, "ENCRYPT=%d\n", cfg->ENCRYPT);
     fprintf(fp, "COMPRESS=%d\n", cfg->COMPRESS);
     fprintf(fp, "SID=%d\n", cfg->SID);
@@ -94,6 +96,7 @@ void setDefaultConfig(Config* cfg) {
 	cfg->COM_RX = 6;
 	cfg->HEADERS = 0;
 	cfg->ENCRYPT = 0;
+    cfg->ERR_DTCT = 0;
 	cfg->COMPRESS = 0;
 	cfg->SID = 1;
 
@@ -111,6 +114,13 @@ void displayFullConfiguration() {
     }
     else {
         printf("HEADERS\t\tOFF\n");
+    }
+
+    if (cfg.ERR_DTCT == ON) {
+        printf("ERR DETECT\tON\n");
+    }
+    else {
+        printf("ERR DETECT\tOFF\n");
     }
 
     if (cfg.ENCRYPT == XOR) { 
@@ -137,10 +147,10 @@ void displayFullConfiguration() {
     printf("RID\t\t%d\n", cfg.RID);
     printf("PRIORITY\t%d\n", cfg.PRIORITY);
 
-    if (cfg.MSGTYPE == 1) {
+    if (cfg.MSGTYPE == TEXT) {
         printf("TYPE\t\tTEXT\n");
     }
-    else if (cfg.MSGTYPE == 2) {
+    else if (cfg.MSGTYPE == AUDIO) {
         printf("TYPE\t\tAUDIO\n");
     }
 }

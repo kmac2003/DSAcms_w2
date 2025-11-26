@@ -42,19 +42,21 @@ enum Tx_TEXT_ADVANCED_MENU {
 
 //receiver
 enum RECEIVER_CHOICES {
-	LISTENING = 1,
-	SEE_QUEUE = 2,
-	Rx_GO_BACK = 3
+	Rx_INSTANT = 1,
+	LISTENING = 2,
+	SEE_QUEUE = 3,
+	Rx_GO_BACK = 4
 };
 
 //settings
 enum SETTINGS {
 	CONFIG_COM = 1,
 	TOGGLE_HEADERS = 2,
-	ENCRYPT_TYPE = 3,
-	COMPRESS_TYPE = 4,
-	SENDERID = 5,
-	Set_GO_BACK = 6
+	TOGGLE_ERR_DTCT = 3,
+	ENCRYPT_TYPE = 4,
+	COMPRESS_TYPE = 5,
+	SENDERID = 6,
+	Set_GO_BACK = 7
 };
 
 //testing
@@ -80,6 +82,7 @@ void invalid();
 void goBack();
 void clearScreen();
 int getInput();
+void enterToContinue();
 
 //w2
 //main menu

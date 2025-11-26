@@ -24,9 +24,7 @@ Comments:		Projects III - Coded Messaging System
 #include "config.h"
 #include "compress.h"
 #include "encrypt.h"
-
-#define AUDIO 1
-#define TEXT 2
+#include "settings.h"
 
 char msgOut[BUFSIZE];
 size_t len;
@@ -74,9 +72,7 @@ void instantTextMsg(HANDLE* hComTx){
 }
 
 //send text messages with a header
-void sendTextWithHeader(HANDLE* hComTx){
-	char msgOut[BUFSIZE];
-	size_t len;
+void sendTextWithHeader(HANDLE* hComTx) {
 
 	printf("\nEnter message to send (q to quit):\n");
 	fgets(msgOut, sizeof(msgOut), stdin);
@@ -90,19 +86,90 @@ void sendTextWithHeader(HANDLE* hComTx){
 	if (_stricmp(msgOut, "q") == 0)
 		return;
 
-	// Build header automatically based on text payload
-	Header txHeader = buildHeader(len + 1, cfg.MSGTYPE);
+	unsigned int inputSize = (unsigned int)(len + 1);
+	unsigned char* inBytes = (unsigned char*)msgOut;
+	unsigned char* payload = inBytes;
+	unsigned int payloadSize = inputSize;
 
-	// Send everything using your existing function
-	transmit(&txHeader, msgOut, hComTx);
+	// Check compression settings
+	if (cfg.COMPRESS == RLE) {
+		payload = new unsigned char[inputSize * 2 + 10]; // worst case buffer
+		payloadSize = compressTextRLE(inBytes, inputSize, payload, inputSize * 2 + 10);
+		printf("Text compression (RLE): %u -> %d bytes (%.1f%%)\n",
+			inputSize, payloadSize, (100.0f * payloadSize) / inputSize);
+	}
+	else if (cfg.COMPRESS == HUFFMAN) {
+		//add huffman text compression here
+	}
+	else {
+		//compression is off, send as is
+	}
 
-	printf("\nText Message Sent!\n");
+	// Build header
+	Header txHeader = buildHeader(payloadSize, TEXT);
 
-	// Prompt user to continue
-	printf("\nPress Enter to continue...");
-	while (getchar() != '\n'); // wait for Enter
+	// Transmit header + payload
+	transmit(&txHeader, payload, hComTx);
+
+	printf("\nText message sent!\n");
+
+	if (cfg.COMPRESS == RLE || cfg.COMPRESS == HUFFMAN) { //if compression is used, free the payload
+		delete[] payload;
+	}
+
+	enterToContinue();
 }
 
+//**********************************************************************************    SENDING AUDIO
+//record and send new audio message
+void recordAndSendAudio(HANDLE* hComTx) {
+	if (!InitializeRecording()) {
+		printf("Error: Failed to initialize recording device.\n");
+		return;
+	}
+
+	if (!RecordBuffer(iBigBuf, lBigBufSize)) {
+		printf("Error: Recording failed.\n");
+		CloseRecording();
+		return;
+	}
+
+	printf("\nRecording complete. (%ld samples)\n", lBigBufSize);
+
+	unsigned int inputSize = lBigBufSize * sizeof(short);
+	unsigned char* inBytes = (unsigned char*)iBigBuf;
+	unsigned char* payload = inBytes;
+	unsigned int payloadSize = inputSize;
+
+	// Check compression settings
+	if (cfg.COMPRESS == RLE) {
+		payload = new unsigned char[inputSize * 2 + 10]; // worst-case
+		payloadSize = compressAudioRLE(inBytes, inputSize, payload, inputSize * 2 + 10);
+		printf("Audio compression (RLE): %u -> %d bytes (%.1f%%)\n",
+			inputSize, payloadSize, (100.0f * payloadSize) / inputSize);
+	}
+	else if (cfg.COMPRESS == HUFFMAN) {
+		//add huffman audio compression here
+	}
+	else {
+		//compression off, send as is
+	}
+
+	// Build header
+	Header txHeader = buildHeader(payloadSize, AUDIO);
+
+	printf("Sending audio clip...\n");
+	transmit(&txHeader, payload, hComTx);
+
+	if (cfg.COMPRESS == RLE || cfg.COMPRESS == HUFFMAN) {
+		delete[] payload;
+	}
+
+	CloseRecording();
+	printf("Audio transmission complete.\n");
+}
+
+//**********************************************************************************    MAIN TRANSMITTER LOOPS
 //create the outgoing header
 void composeHeaderLoop() {
 	system("cls");
@@ -126,16 +193,13 @@ void composeHeaderLoop() {
 		printf("\nPriority set to: %d\n\n", priority);
 
 		printf("Message type:\n1: Audio\n2: Text\n> ");
-
 		int choice = getInput();
 
 		if (choice == TEXT) {
-			printf("\nText message selected.\n");
 			cfg.MSGTYPE = TEXT;  // Text
 			sendTextWithHeader(&hComTx);
 		}
 		else if (choice == AUDIO) {
-			printf("\nAudio message selected.\n");
 			cfg.MSGTYPE = AUDIO;  // Audio
 			recordAndSendAudio(&hComTx);
 		}
@@ -154,60 +218,6 @@ void composeHeaderLoop() {
 	clearScreen();
 }
 
-//**********************************************************************************    SENDING AUDIO
-//record and send new audio message
-void recordAndSendAudio(HANDLE* hComTx) {
-
-	//initialize recording
-	if (!InitializeRecording()) {
-		printf("Error: Failed to initialize recording device.\n");
-		return;
-	}
-	//record into buffer
-	if (!RecordBuffer(iBigBuf, lBigBufSize)) {
-		printf("Error: Recording failed.\n");
-		CloseRecording();
-		return;
-	}
-	printf("\n\nRecording complete. (%ld samples)\n", lBigBufSize);
-
-	//prepare header
-	Header txHeader = buildHeader(lBigBufSize * sizeof(short), AUDIO);
-
-	//send header and payload
-	printf("Sending audio clip (%ld bytes)...\n", txHeader.payloadSize);
-	transmit(&txHeader, (void*)iBigBuf, hComTx);
-
-	//clean up
-	CloseRecording();
-	printf("Audio transmission complete.\n");
-}
-
-//asks the user if they'd like to listen to the msg they just recorded
-void listenToMsg(){
-	char ch;
-	transmitting = TRUE;
-	printf("\nWould you like to listen to your recording? (y / n)\n");
-	while (transmitting) {
-		if (_kbhit()) {          // Check if a key has been pressed
-			ch = _getch();       // Get the character without waiting for Enter
-			if (ch == 'y' || ch == 'Y') {
-				playFront(); //play message and then go to audio sub menu
-				break;
-			}
-			else if (ch == 'n' || ch == 'N') {
-				//user hit no, skip to audio sub menu
-				break;
-			}
-			else {
-				printf("\nInvalid key '%c'. Press 'y' or 'n'.\n", ch);
-			}
-		}
-	}
-	system("cls");
-}
-
-//**********************************************************************************    MAIN TRANSMITTER LOOP
 //main transmitter branch loop
 void transmitterLoop(HANDLE* hComTx){
 	transmitting = TRUE;
@@ -227,10 +237,6 @@ void transmitterLoop(HANDLE* hComTx){
 		case Tx_GO_BACK:
 			goBack();
 			transmitting = FALSE;
-			break;
-
-		case 4:
-			recordAndSendAudio(hComTx);
 			break;
 
 		default:

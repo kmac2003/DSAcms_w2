@@ -11,8 +11,10 @@ Comments:		Projects III - Coded Messaging System
 ==========================================================================================================================
 */
 #pragma once
-
 #include <Windows.h>
+
+#define AUDIO 1
+#define TEXT 2
 
 extern int receiverID;
 extern char msgOut[];
@@ -20,11 +22,10 @@ extern char msgOut[];
 //text
 void instantTextMsg(HANDLE* hComTx);
 void sendTextWithHeader(HANDLE* hComTx);
-void composeHeaderLoop();
-
 //audio
 void recordAndSendAudio(HANDLE* hComTx);
-void listenToMsg();
-
-//main transmitter loop
+//main loops
+//composing header
+void composeHeaderLoop();
+//main transmitter loops
 void transmitterLoop(HANDLE* hComTx);

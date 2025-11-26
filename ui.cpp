@@ -111,6 +111,13 @@ int getInput() {
     return value;
 }
 
+//force user to hit enter to continue
+void enterToContinue() {
+    printf("\nPress Enter to continue...");
+    while (getchar() != '\n'); // wait for user
+    clearScreen();
+}
+
 //w2
 //**********************************************************************************    PRINTF MENUS
 //select whether the program functions as a transmitter or receiver
@@ -134,9 +141,10 @@ int selectStation() {
 //selects what kind of message user wishes to receive
 void receivingMenu(){
     printf("\n============= RECEIVING STATION ================\n");
-    printf("1. Listen for new messages\n");
-    printf("2. Show queue\n");
-    printf("3. Back");
+    printf("1. INSTANT messaging\n");
+    printf("2. Listen for advanced messages\n");
+    printf("3. Show queue\n");
+    printf("4. Back");
     printf("\n===========================================================\n");
 }
 
@@ -156,10 +164,11 @@ void settingsMenu() {
     printf("\n============= SETTINGS ================\n");
     printf("1. Set COM port numbers\n");
     printf("2. Toggle headers\n");
-    printf("3. Set encryption type\n");
-    printf("4. Set compression type\n");
-    printf("5. Set SID\n");
-    printf("6. Back");
+    printf("3. Toggle error detection\n");
+    printf("4. Set encryption type\n");
+    printf("5. Set compression type\n");
+    printf("6. Set SID\n");
+    printf("7. Back");
     printf("\n===========================================\n\n");
 }
 

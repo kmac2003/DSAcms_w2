@@ -22,6 +22,7 @@ Comments:		Projects III - Coded Messaging System
 
 void configureComPorts();
 void toggleHeader();
+void toggleErrorDtct();
 void encryptType();
 void compressType();
 void configSID();

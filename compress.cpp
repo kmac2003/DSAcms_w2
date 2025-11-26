@@ -7,7 +7,7 @@ Implemented:    KIEN MACARTNEY
 Date:           NOV 11 2025
 Comments:		Projects III - Coded Messaging System
 
-				Huffman compression implementation file
+				Huffman / RLE compression implementation file
 
 ==========================================================================================================================
 */
@@ -936,7 +936,6 @@ int RLE_Decode(unsigned char* in, unsigned int inlen, unsigned char* out, unsign
     return (int)outpos;
 }
 
-
 // RLE file compression wrapper
 void rle_compress_file(const char* input_file, const char* output_file) {
     FILE* in_file = fopen(input_file, "rb");
@@ -1093,4 +1092,58 @@ void rle_decompress_file(const char* input_file, const char* output_file) {
 
     free(compressed_data);
     free(decompressed_data);
+}
+
+//w6
+//text compression and decompression
+int compressTextRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize){
+    // Allocate worst-case buffer (RLE may expand!)
+    unsigned int tempMaxSize = inputSize * 2 + 10;
+    unsigned char* tempBuffer = new unsigned char[tempMaxSize];
+
+    int compressedSize = RLE_Compress(input, tempBuffer, inputSize);
+
+    // Safety: ensure not exceeding provided output buffer
+    if (compressedSize > (int)outputMaxSize)
+        compressedSize = outputMaxSize;
+
+    memcpy(output, tempBuffer, compressedSize);
+    delete[] tempBuffer;
+    return compressedSize;
+}
+
+int decompressTextRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize){
+    // Worst-case decompression = outputMaxSize provided by caller
+    unsigned char* tempBuffer = new unsigned char[outputMaxSize];
+
+    RLE_Uncompress(input, tempBuffer, inputSize);
+
+    memcpy(output, tempBuffer, outputMaxSize);
+    delete[] tempBuffer;
+    return outputMaxSize; // Caller knows expected final size
+}
+
+//audio compression and decompression
+int compressAudioRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize){
+    unsigned int tempMaxSize = inputSize * 2 + 10;
+    unsigned char* tempBuffer = new unsigned char[tempMaxSize];
+
+    int compressedSize = RLE_Compress(input, tempBuffer, inputSize);
+
+    if (compressedSize > (int)outputMaxSize)
+        compressedSize = outputMaxSize;
+
+    memcpy(output, tempBuffer, compressedSize);
+    delete[] tempBuffer;
+    return compressedSize;
+}
+
+int decompressAudioRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize){
+    unsigned char* tempBuffer = new unsigned char[outputMaxSize];
+
+    RLE_Uncompress(input, tempBuffer, inputSize);
+
+    memcpy(output, tempBuffer, outputMaxSize);
+    delete[] tempBuffer;
+    return outputMaxSize;
 }

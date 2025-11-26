@@ -68,6 +68,19 @@ void toggleHeader() {
     printf("\nHeaders %s!\n", cfg.HEADERS ? "ON" : "OFF");
 }
 
+//allow user to toggle the detection of errors in messages
+void toggleErrorDtct(){
+    system("cls");
+    printf("\n=== Enable or disable error detection ===\n");
+    printf("1 = ON\n0 = OFF\n");
+
+    int choice = getInput();
+    cfg.ERR_DTCT = (choice == 1) ? 1 : 0;
+
+    saveConfig(CONFIG_FILE, &cfg);
+    printf("\nError detection %s!\n", cfg.ERR_DTCT ? "ON" : "OFF");
+}
+
 //set encryption type (Vigenere or XOR)
 void encryptType() {
     system("cls");
@@ -135,6 +148,10 @@ void settingsLoop() {
 
         case TOGGLE_HEADERS:
             toggleHeader();
+            break;
+
+        case TOGGLE_ERR_DTCT:
+            toggleErrorDtct();
             break;
 
         case ENCRYPT_TYPE:
