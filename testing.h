@@ -17,6 +17,8 @@ void stripNewline(char* s);
 void xorDemo();
 void testingLoop(HANDLE* hComTx);
 //error testing
+void testErrDetection(HANDLE* hComTx);
 unsigned char computeChecksum(const char* data, int length);
 void introduceBitErrors(char* data, int length, float errorRate = 0.05f);
+void sendNormalQuote(HANDLE* hComTx);
 void sendCorruptedQuote(HANDLE* hComTx);

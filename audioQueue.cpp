@@ -12,6 +12,7 @@ Comments:		Projects III - Coded Messaging System
 */
 #include "RS232Comm.h"
 #include "audioQueue.h"
+#include "ui.h"
 
 link front = NULL;
 link rear = NULL;

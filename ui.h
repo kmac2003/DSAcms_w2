@@ -17,57 +17,57 @@ Comments:		Projects III - Coded Messaging System
 //main menu
 enum SELECT_MODE {
 	TRANSMITTER = 1,
-	RECEIVER = 2,
-	TESTING = 3,
-	PHONEBOOK = 4,
-	SETTINGS = 5,
-	QUIT = 6
+	RECEIVER,
+	TESTING,
+	PHONEBOOK,
+	SETTINGS,
+	QUIT
 };
 
 //transmitter
 enum TRANSMITTER_CHOICES {
 	INSTANT_TEXT = 1,
-	COMPOSE_HEADER = 2,
-	Tx_GO_BACK = 3
-};
-
-enum Tx_TEXT_ADVANCED_MENU {
-	COMPRESS_TEXT = 1,
-	ENCRYPT_TEXT = 2,
-	ADD_HEADER_TEXT = 3,
-	DELETE_TEXT = 4,
-	SEND_TEXT = 5,
-	GO_BACK_TEXT = 6
+	COMPOSE_HEADER,
+	Tx_GO_BACK
 };
 
 //receiver
 enum RECEIVER_CHOICES {
 	Rx_INSTANT = 1,
-	LISTENING = 2,
-	SEE_QUEUE = 3,
-	Rx_GO_BACK = 4
+	LISTENING,
+	SEE_QUEUE,
+	Rx_GO_BACK
 };
 
 //settings
 enum SETTINGS {
 	CONFIG_COM = 1,
-	TOGGLE_HEADERS = 2,
-	TOGGLE_ERR_DTCT = 3,
-	ENCRYPT_TYPE = 4,
-	COMPRESS_TYPE = 5,
-	SENDERID = 6,
-	Set_GO_BACK = 7
+	TOGGLE_HEADERS,
+	TOGGLE_ERR_DTCT,
+	ENCRYPT_TYPE,
+	COMPRESS_TYPE,
+	SENDERID,
+	Set_GO_BACK
 };
 
 //testing
 enum TESTING {
 	LOOPBACK = 1,
-	CONSTRUCT_HEADER = 2,
-	SORTING_QUEUE = 3,
-	ERROR_DETECT = 4,
-	ENCRYPT_DECRPYT = 5,
-	COMPRESS_DECOMPRESS = 6,
-	BACK_TESTING = 7
+	CONSTRUCT_HEADER,
+	SORTING_QUEUE,
+	ERROR_DETECT,
+	ENCRYPT_DECRPYT,
+	COMPRESS_DECOMPRESS,
+	BACK_TESTING
+};
+
+//phonebook
+enum PHONEBOOK {
+	VIEW_ALL = 1,
+	SEARCH_SID,
+	SEARCH_RID,
+	PRINT_ALL,
+	Pb_BACK
 };
 
 //get current time
@@ -95,5 +95,7 @@ void transmittingMenu();
 void settingsMenu();
 //testing
 void testingMenu();
+//phonebook
+void phonebookMenu();
 //main loop
 void runModeLoop();

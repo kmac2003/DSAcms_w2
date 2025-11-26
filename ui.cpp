@@ -26,6 +26,7 @@ Comments:		Projects III - Coded Messaging System
 #include "encrypt.h"
 #include "settings.h"
 #include "testing.h"
+#include "phonebook.h"
 
 int running = TRUE;
 
@@ -186,6 +187,18 @@ void testingMenu() {
     printf("\n===========================================================\n");
 }
 
+//**********************************************************************************    PHONEBOOK MENU
+//open message history
+void phonebookMenu() {
+    printf("\n============= PHONEBOOK ================\n");
+    printf("1. Total messages\n");
+    printf("2. Search by SID\n");
+    printf("3. Search by RID\n");
+    printf("4. Print phonebook\n");
+    printf("5. Back");
+    printf("\n===========================================\n\n");
+}
+
 //**********************************************************************************    CORE LOOP
 //runs the core Tx/Rx system
 void runModeLoop(){
@@ -223,8 +236,7 @@ void runModeLoop(){
             break;
 
         case PHONEBOOK:
-            system("cls");
-            printf("phonebook\n");
+            phonebookLoop();
             break;
 
         case SETTINGS:

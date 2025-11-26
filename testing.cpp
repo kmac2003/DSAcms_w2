@@ -29,6 +29,9 @@ Comments:		Projects III - Coded Messaging System
 #include "testing.h"
 #include "fileIO.h"
 
+#define NORMAL 1
+#define CORRUPT 2
+
 char currQuote[MAX_QUOTE_LENGTH]; // Buffer to write the message to
 int newchoice = 0;
 
@@ -128,6 +131,26 @@ void xorDemo() {
 	clearScreen();
 }
 
+//error detection wrapper function
+void testErrDetection(HANDLE* hComTx) {
+    system("cls");
+    printf("Send normal quote (1)\nSend corrupted quote (2)\n");
+    int errorChoice = getInput();
+
+    if (errorChoice == NORMAL) {
+        sendNormalQuote(hComTx);
+    }
+    else if (errorChoice == CORRUPT) {
+        sendCorruptedQuote(hComTx);
+    }
+    else {
+        printf("Invalid choice.\n");
+    }
+
+    Sleep(3000);
+    clearScreen();
+}
+
 //error testing
 unsigned char computeChecksum(const char* data, int length) {
     unsigned int sum = 0;
@@ -146,6 +169,7 @@ void introduceBitErrors(char* data, int length, float errorRate) {
     }
 }
 
+//send a corrupted quote with the checksum
 void sendCorruptedQuote(HANDLE* hComTx) {
     // STEP 1: Get a random quote from fileIO
     getRandQuote(currQuote);
@@ -156,6 +180,7 @@ void sendCorruptedQuote(HANDLE* hComTx) {
     }
 
     int payloadSize = strlen(quote);
+    int txSize = payloadSize + 1;    // +1 for checksum byte
 
     // STEP 2: Compute checksum BEFORE corruption
     unsigned char checksum = computeChecksum(quote, payloadSize);
@@ -173,7 +198,39 @@ void sendCorruptedQuote(HANDLE* hComTx) {
     printf("Original Checksum: %u\n", checksum);
 
     // STEP 4: Transmit using your serial function
-    Header txHeader = buildHeader(payloadSize, TEXT);
+    Header txHeader = buildHeader(txSize, TEXT);
+    transmit(&txHeader, (unsigned char*)messageWithChecksum, hComTx);
+
+    free(messageWithChecksum);
+}
+
+//send a normal quote with the checksum
+void sendNormalQuote(HANDLE* hComTx) {
+    // STEP 1: Load quote
+    getRandQuote(currQuote);
+    char* quote = currQuote;
+    if (!quote) {
+        printf("Error: Could not load quote.\n");
+        return;
+    }
+
+    int payloadSize = strlen(quote);
+    int txSize = payloadSize + 1;    // +1 for checksum byte
+
+    // STEP 2: Compute checksum
+    unsigned char checksum = computeChecksum(quote, payloadSize);
+
+    // Append checksum
+    char* messageWithChecksum = (char*)malloc(payloadSize + 2);
+    memcpy(messageWithChecksum, quote, payloadSize);
+    messageWithChecksum[payloadSize] = checksum;
+    messageWithChecksum[payloadSize + 1] = '\0';
+
+    printf("\n>>> Sending NORMAL QUOTE\n");
+    printf("Checksum: %u\n", checksum);
+
+    // STEP 3: Build header + transmit
+    Header txHeader = buildHeader(txSize, TEXT);
     transmit(&txHeader, (unsigned char*)messageWithChecksum, hComTx);
 
     free(messageWithChecksum);
@@ -200,7 +257,7 @@ void testingLoop(HANDLE* hComTx) {
             break;
 
         case ERROR_DETECT:
-            sendCorruptedQuote(hComTx);
+            testErrDetection(hComTx);
             break;
 
         case ENCRYPT_DECRPYT:

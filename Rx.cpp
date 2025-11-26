@@ -40,6 +40,9 @@ void receiveMessage(HANDLE* hComRx){
 	void* rxPayload = NULL;
 	DWORD bytesRead;
 
+	system("cls");
+	printf("\nReceiving...\n");
+
 	bytesRead = receive(&rxHeader, &rxPayload, hComRx);
 	if (bytesRead == 0 || rxPayload == NULL) {
 		printf("\nError: No data received.\n");
@@ -176,7 +179,7 @@ bool validateReceivedPayload(char* data, int length) {
 		printf("Expected: %u | Got: %u\n", receivedChecksum, computed);
 		return false;
 	}
-	printf("Checksum OK — No transmission errors.\n");
+	printf("Checksum OK! No transmission errors.\n");
 	return true;
 }
 
@@ -272,59 +275,43 @@ void receiveAudioAndPlay(HANDLE* hComRx) {
 void receiverLoop() {
 	int receiving = TRUE;
 
-	// Build COM port name string
+	// Setup COM port each time the loop starts
 	wchar_t rxPortName[10];
 	swprintf(rxPortName, 10, L"COM%d", cfg.COM_RX);
+	HANDLE hComRx = setupComPort(rxPortName, nComRate, nComBits, timeout);
 
+	// Receiver menu loop
+	int inLoop = TRUE;
 	while (receiving) {
-		// Setup COM port each time the loop starts
-		HANDLE hComRx = setupComPort(rxPortName, nComRate, nComBits, timeout);
+		receivingMenu();
+		int choice = getInput();
 
-		// Receiver menu loop
-		int inLoop = TRUE;
-		while (inLoop) {
-			receivingMenu();
-			int choice = getInput();
+		switch (choice) {
+		case Rx_INSTANT:
+			rxInstantText(&hComRx);
+			break;
 
-			switch (choice) {
-			case Rx_INSTANT:
-				rxInstantText(&hComRx);
-				break;
+		case LISTENING:
+			receiveMessage(&hComRx);
+			break;
 
-			case LISTENING:
-				system("cls");
-				printf("\nReceiving...\n");
+		case SEE_QUEUE:
+			displayQueue();
+			enterToContinue();
+			break;
 
-				receiveMessage(&hComRx);
-				break;
-
-			case SEE_QUEUE:
-				displayQueue();
-				enterToContinue();
-				break;
-
-			case Rx_GO_BACK:
-				goBack();
-				receiving = FALSE;
-				inLoop = FALSE;   // exit inner menu loop
-				break;
-
-			default:
-				invalid();
-				break;
-			}
-		}
-
-		// Teardown COM port after user exits menu
-		purgePort(&hComRx);
-		CloseHandle(hComRx);
-		hComRx = INVALID_HANDLE_VALUE;
-
-		printf("\nReturn to receiver menu? (y/n): ");
-		char ch = getchar();
-		while (getchar() != '\n'); // flush input buffer
-		if (ch != 'y' && ch != 'Y') {
+		case Rx_GO_BACK:
+			goBack();
 			receiving = FALSE;
+			break;
+
+		default:
+			invalid();
+			break;
 		}
 	}
+	// Teardown COM port after user exits menu
+	purgePort(&hComRx);
+	CloseHandle(hComRx);
+	hComRx = INVALID_HANDLE_VALUE;
 }

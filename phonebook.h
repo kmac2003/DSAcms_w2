@@ -14,3 +14,8 @@ Comments:		Projects III - Coded Messaging System
 #include <Windows.h>
 
 void logHeaderToPhonebook(Header* h);
+int fnumLogs();
+void searchBySID();
+void searchByRID();
+void printAllLogs();
+void phonebookLoop();
