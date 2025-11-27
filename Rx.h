@@ -21,6 +21,8 @@ void receiveMessage(HANDLE* hComRx);
 //text
 void rxInstantText(HANDLE* hComRx);
 bool validateReceivedPayload(char* data, int length);
+bool correctPayload(char* data, int length);
+void queueLoop();
 //void receiveTextMessage(HANDLE* hComRx);
 //audio
 //void receiveAudioAndPlay(HANDLE* hComRx);

@@ -37,43 +37,8 @@ struct tm getTimeStruct() {
     return *current_time;
 }
 
-//w1
-//save the front message in the queue to file
-void saveFront(){
-    if (isQueueEmpty()) {
-        printf("\nQueue is empty. Nothing to save\n");
-        return;
-    }
-    link frontNode = peekQueue();
-    saveAudio(frontNode->Data.buffer, frontNode->Data.size, frontNode->Data.filename);
-}
 
-//play the front message in the queue
-void playFront(){
-    if (isQueueEmpty()) {
-        printf("\nQueue is empty. No messages to play\n");
-        return;
-    }
-    link frontNode = peekQueue();
-    printf("\nPlaying message: %s\n", frontNode->Data.filename);
-    PlayBuffer(frontNode->Data.buffer, frontNode->Data.size);
-    ClosePlayback();
-    InitializePlayback();
-}
 
-//delete the front message in the queue
-void deleteFront(){
-    if (isQueueEmpty()) {
-        printf("\nQueue is empty. Nothing to delete\n");
-        return;
-    }
-    link deleted = deQueue();
-    printf("Deleted message: %s\n", deleted->Data.filename);
-
-    //free audio buffer
-    free(deleted->Data.buffer);
-    free(deleted);
-}
 
 //**********************************************************************************    MENU QOL FUNCTIONS
 //program quit
@@ -142,9 +107,19 @@ int selectStation() {
 //selects what kind of message user wishes to receive
 void receivingMenu(){
     printf("\n============= RECEIVING STATION ================\n");
-    printf("1. INSTANT messaging\n");
-    printf("2. Listen for advanced messages\n");
-    printf("3. Show queue\n");
+    printf("1. INSTANT (TEXT)\n");
+    printf("2. ADVANCED (TEXT / AUDIO)\n");
+    printf("3. QUEUE\n");
+    printf("4. BACK");
+    printf("\n===========================================================\n");
+}
+
+//navigate the queued messages
+void queueMenu() {
+    printf("\n============= NAVIGATE QUEUE ================\n");
+    printf("1. Show full queue\n");
+    printf("2. See first message\n");
+    printf("3. Discard first message\n");
     printf("4. Back");
     printf("\n===========================================================\n");
 }
@@ -180,7 +155,7 @@ void testingMenu() {
     printf("1. ** Loopback\n");
     printf("2. ** Construct header\n");
     printf("3. ** Sorting queue\n");
-    printf("4. ** Error detection\n");
+    printf("4. Error detection\n");
     printf("5. Encrypt / decrypt\n");
     printf("6. Compress / decompress\n");
     printf("7. Back");

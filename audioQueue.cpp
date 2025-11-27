@@ -10,8 +10,10 @@ Comments:		Projects III - Coded Messaging System
 
 ==========================================================================================================================
 */
+#define _CRT_SECURE_NO_WARNINGS
 #include "RS232Comm.h"
 #include "audioQueue.h"
+#include "sound.h"
 #include "ui.h"
 
 link front = NULL;
@@ -167,7 +169,7 @@ void enqueueAudioAndHdr(short* buf, long size, const char* name, Header* hdr){
 		}
 	}
 	messageCount++;
-	printf("Audio queued with priority: %d. Queue size: %d\n", hdr->priority, messageCount);
+	printf("\nAudio queued with priority: %d. Queue size: %d\n", hdr->priority, messageCount);
 }
 
 //queues text + header 
@@ -225,7 +227,86 @@ void enqueueTextAndHdr(const char* msg, const char* label, Header *header) {
 		}
 	}
 	messageCount++;
-	printf("Text queued with piority: %d. Queue size: %d\n", header->priority, messageCount);
+	printf("\nText queued with piority: %d. Queue size: %d\n", header->priority, messageCount);
 }
 
+//deletes the message at the front of the queue
+void deleteFrontMessage() {
+	if (isQueueEmpty()) {
+		printf("\nQueue is empty. Nothing to delete.\n");
+		return;
+	}
 
+	link delNode = deQueue();
+
+	if (delNode->Data.type == PAYLOAD_AUDIO && delNode->Data.buffer) {
+		free(delNode->Data.buffer);
+	}
+	if (delNode->Data.type == PAYLOAD_TEXT && delNode->Data.text) {
+		free(delNode->Data.text);
+	}
+
+	free(delNode);
+	printf("Front message deleted successfully.\n");
+}
+
+//view front message and ask to move onto the next
+void viewMessages() {
+	if (isQueueEmpty()) {
+		printf("\nQueue is empty — nothing to view.\n");
+		return;
+	}
+
+	char userInput;
+
+	while (!isQueueEmpty()) {
+		system("cls");
+		link frontMsg = peekQueue();
+
+		printf("\n========== Viewing Message ==========\n");
+		printf("Filename\t: %s\n", frontMsg->Data.filename);
+		printf("Type\t\t: %s\n",
+			(frontMsg->Data.type == PAYLOAD_AUDIO ? "Audio" : "Text"));
+		printf("SID\t\t: %d\nRID\t\t: %d\nPriority\t: %d\n",
+			frontMsg->Data.hdr.sid,
+			frontMsg->Data.hdr.rid,
+			frontMsg->Data.hdr.priority);
+
+		if (frontMsg->Data.type == PAYLOAD_TEXT && frontMsg->Data.text) {
+			printf("\nMessage Content:\n%s\n", frontMsg->Data.text);
+		}
+		else if (frontMsg->Data.type == PAYLOAD_AUDIO) {
+			printf("\nPlaying audio message...\n");
+			PlayBuffer(frontMsg->Data.buffer, frontMsg->Data.size);
+			ClosePlayback();
+			InitializePlayback();
+		}
+
+		printf("\n[N]ext\n[D]elete\n[E]xit\n");
+		printf("\nEnter your choice: ");
+		scanf(" %c", &userInput);
+
+		if (userInput == 'N' || userInput == 'n') {
+			// Remove message but do NOT free audio/text (user wants to keep it)
+			link old = deQueue();
+			// Caller owns memory now, free later if desired
+			if (old->Data.type == PAYLOAD_AUDIO && old->Data.buffer)
+				free(old->Data.buffer);
+			if (old->Data.type == PAYLOAD_TEXT && old->Data.text)
+				free(old->Data.text);
+			free(old);
+		}
+		else if (userInput == 'D' || userInput == 'd') {
+			deleteFrontMessage();
+		}
+		else if (userInput == 'E' || userInput == 'e') {
+			printf("\nExiting message viewer.\n");
+			return;
+		}
+		else {
+			printf("\nInvalid selection — please try again.\n");
+		}
+	}
+
+	printf("\nAll messages have been viewed.\n");
+}

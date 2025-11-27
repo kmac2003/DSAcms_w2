@@ -87,12 +87,11 @@ void receiveMessage(HANDLE* hComRx){
 
 	//check for errors if err detect is on
 	if (cfg.ERR_DTCT == ON) {
-		bool ok = validateReceivedPayload((char*)rxPayload, rxHeader.payloadSize);
+		bool ok = correctPayload((char*)rxPayload, rxHeader.payloadSize);
+		//bool ok = validateReceivedPayload((char*)rxPayload, rxHeader.payloadSize);
 
 		if (!ok) {
-			printf("Payload rejected due to checksum error.\n");
-
-			// drop the payload:
+			printf("Payload rejected: uncorrectable error.\n");
 			free(rxPayload);
 			enterToContinue();
 			return;
@@ -181,6 +180,74 @@ bool validateReceivedPayload(char* data, int length) {
 	}
 	printf("Checksum OK! No transmission errors.\n");
 	return true;
+}
+
+//attempt to correct the payload
+bool correctPayload(char* data, int length) {
+	unsigned char receivedChecksum = (unsigned char)data[length - 1];
+	unsigned char computed = computeChecksum(data, length - 1);
+
+	if (computed == receivedChecksum) {
+		printf("Checksum OK! No transmission errors.\n");
+		return true;
+	}
+
+	printf("Checksum mismatch! Attempting correction...\n");
+
+	// SINGLE BIT flip correction
+	for (int i = 0; i < length - 1; i++) {
+		for (int bit = 0; bit < 8; bit++) {
+
+			data[i] ^= (1 << bit);  // flip bit
+
+			unsigned char recompute = computeChecksum(data, length - 1);
+
+			if (recompute == receivedChecksum) {
+				printf("Single-bit error corrected at byte %d, bit %d\n", i, bit);
+				return true;
+			}
+
+			data[i] ^= (1 << bit);  // restore original if not correct
+		}
+	}
+
+	printf("❌ Could not correct payload\n");
+	return false;
+}
+
+//queued messages loop
+void queueLoop() {
+	system("cls");
+
+	int inQueue = TRUE;
+	while (inQueue) {
+		queueMenu();
+		int choice = getInput();
+
+		switch (choice) {
+		case SHOW_FULL:
+			displayQueue();
+			enterToContinue();
+			break;
+
+		case SHOW_FIRST:
+			viewMessages();
+			break;
+
+		case DISCARD_FIRST:
+			deleteFrontMessage();
+			break;
+
+		case Q_BACK:
+			goBack();
+			inQueue = FALSE;
+			break;
+
+		default:
+			invalid();
+			break;
+		}
+	}
 }
 
 /*
@@ -281,7 +348,6 @@ void receiverLoop() {
 	HANDLE hComRx = setupComPort(rxPortName, nComRate, nComBits, timeout);
 
 	// Receiver menu loop
-	int inLoop = TRUE;
 	while (receiving) {
 		receivingMenu();
 		int choice = getInput();
@@ -295,9 +361,8 @@ void receiverLoop() {
 			receiveMessage(&hComRx);
 			break;
 
-		case SEE_QUEUE:
-			displayQueue();
-			enterToContinue();
+		case MANAGE_QUEUE:
+			queueLoop();
 			break;
 
 		case Rx_GO_BACK:

@@ -21,8 +21,8 @@ Comments:		Projects III - Coded Messaging System
 
 typedef enum PayloadType {
     PAYLOAD_NONE = 0,
-    PAYLOAD_AUDIO = 1,
-    PAYLOAD_TEXT = 2
+    PAYLOAD_AUDIO,
+    PAYLOAD_TEXT
 };
 
 typedef struct item Item;
@@ -58,4 +58,5 @@ void displayQueue();
 //enqueuing
 void enqueueAudioAndHdr(short* buf, long size, const char* name, Header* hdr);
 void enqueueTextAndHdr(const char* msg, const char* label, Header* header);
-
+void deleteFrontMessage();
+void viewMessages();

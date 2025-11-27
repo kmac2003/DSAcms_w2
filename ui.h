@@ -35,8 +35,15 @@ enum TRANSMITTER_CHOICES {
 enum RECEIVER_CHOICES {
 	Rx_INSTANT = 1,
 	LISTENING,
-	SEE_QUEUE,
+	MANAGE_QUEUE,
 	Rx_GO_BACK
+};
+
+enum QUEUE_CHOICES {
+	SHOW_FULL = 1,
+	SHOW_FIRST,
+	DISCARD_FIRST,
+	Q_BACK
 };
 
 //settings
@@ -74,9 +81,7 @@ enum PHONEBOOK {
 struct tm getTimeStruct();
 
 //w1
-void saveFront();
-void playFront();
-void deleteFront();
+
 void quit();
 void invalid();
 void goBack();
@@ -89,6 +94,7 @@ void enterToContinue();
 int selectStation();
 //receiver
 void receivingMenu();
+void queueMenu();
 //transmitter
 void transmittingMenu();
 //settings
