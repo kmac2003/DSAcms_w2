@@ -53,6 +53,8 @@ void configureComPorts() {
 
     saveConfig(CONFIG_FILE, &cfg);
     printf("\nCOM ports updated!\n");
+
+    enterToContinue();
 }
 
 //allow user to turn message headers on/off
@@ -66,6 +68,8 @@ void toggleHeader() {
 
     saveConfig(CONFIG_FILE, &cfg);
     printf("\nHeaders %s!\n", cfg.HEADERS ? "ON" : "OFF");
+
+    enterToContinue();
 }
 
 //allow user to toggle the detection of errors in messages
@@ -79,6 +83,8 @@ void toggleErrorDtct(){
 
     saveConfig(CONFIG_FILE, &cfg);
     printf("\nError detection %s!\n", cfg.ERR_DTCT ? "ON" : "OFF");
+
+    enterToContinue();
 }
 
 //set encryption type (Vigenere or XOR)
@@ -96,6 +102,7 @@ void encryptType() {
     else {
         invalid();
     }
+    enterToContinue();
 }
 
 //set encryption type (Huffman or RLE)
@@ -130,6 +137,7 @@ void configSID() {
     else {
         printf("\nInvalid SID!\n");
     }
+    enterToContinue();
 }
 
 //switch case for all setting configurations

@@ -93,6 +93,7 @@ int fnumLogs() {
             }
         }
         printf("\nThere are %d messages in this phonebook\n", counter);
+        enterToContinue();
         fclose(fp);
         return(counter);
     }
@@ -176,7 +177,8 @@ void printAllLogs() {
         printf("\nPhonebook is empty or cannot be opened.\n");
         return;
     }
-    printf("============= PHONEBOOK CONTENTS =============\n\n");
+    printf("============= PHONEBOOK ============\n");
+    printf("============= ALL LOGS =============\n\n");
     int ch;
     int lineCount = 0;
     while ((ch = fgetc(fp)) != EOF) {
@@ -187,7 +189,7 @@ void printAllLogs() {
     if (lineCount == 0) {
         printf("\nPhonebook is empty\n");
     }
-    printf("\n==============================================\n");
+    printf("====================================\n");
 
     enterToContinue();
 }

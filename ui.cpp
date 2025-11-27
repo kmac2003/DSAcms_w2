@@ -106,46 +106,47 @@ int selectStation() {
 //**********************************************************************************    RECEIVER MENUS
 //selects what kind of message user wishes to receive
 void receivingMenu(){
-    printf("\n============= RECEIVING STATION ================\n");
-    printf("1. INSTANT (TEXT)\n");
-    printf("2. ADVANCED (TEXT / AUDIO)\n");
-    printf("3. QUEUE\n");
-    printf("4. BACK");
-    printf("\n===========================================================\n");
+    printf("\n============= RECEIVING ================\n");
+    printf("1. Instant\n");
+    printf("2. Advanced\n");
+    printf("3. Queue\n");
+    printf("4. Back");
+    printf("\n========================================\n");
 }
 
 //navigate the queued messages
 void queueMenu() {
-    printf("\n============= NAVIGATE QUEUE ================\n");
+    printf("\n============= RECEIVING ============\n");
+    printf("\n============= QUEUE ================\n");
     printf("1. Show full queue\n");
     printf("2. See first message\n");
     printf("3. Discard first message\n");
     printf("4. Back");
-    printf("\n===========================================================\n");
+    printf("\n====================================\n");
 }
 
 //**********************************************************************************    TRANSMITTER MENUS
 //selects what kind of message user wishes to send
 void transmittingMenu() {
-    printf("\n============= TRANSMITTING STATION ================\n");
+    printf("\n============= TRANSMITTING =============\n");
     printf("1. Instant text message\n");
     printf("2. Compose header\n");
     printf("3. Back");
-    printf("\n===========================================================\n");
+    printf("\n========================================\n");
 }
 
 //**********************************************************************************    SETTINGS MENU
 //diplays setting choices
 void settingsMenu() {
-    printf("\n============= SETTINGS ================\n");
-    printf("1. Set COM port numbers\n");
+    printf("\n============= SETTINGS =============\n");
+    printf("1. COM ports\n");
     printf("2. Toggle headers\n");
-    printf("3. Toggle error detection\n");
-    printf("4. Set encryption type\n");
-    printf("5. Set compression type\n");
+    printf("3. Toggle error detect\n");
+    printf("4. Encryption type\n");
+    printf("5. Compression type\n");
     printf("6. Set SID\n");
     printf("7. Back");
-    printf("\n===========================================\n\n");
+    printf("\n====================================\n\n");
 }
 
 //**********************************************************************************    TESTING MENU
@@ -159,19 +160,19 @@ void testingMenu() {
     printf("5. Encrypt / decrypt\n");
     printf("6. Compress / decompress\n");
     printf("7. Back");
-    printf("\n===========================================================\n");
+    printf("\n======================================\n");
 }
 
 //**********************************************************************************    PHONEBOOK MENU
 //open message history
 void phonebookMenu() {
-    printf("\n============= PHONEBOOK ================\n");
+    printf("\n============= PHONEBOOK =============\n");
     printf("1. Total messages\n");
     printf("2. Search by SID\n");
     printf("3. Search by RID\n");
     printf("4. Print phonebook\n");
     printf("5. Back");
-    printf("\n===========================================\n\n");
+    printf("\n=====================================\n\n");
 }
 
 //**********************************************************************************    CORE LOOP

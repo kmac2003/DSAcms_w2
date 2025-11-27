@@ -43,8 +43,12 @@ void huffmanDemo() {
     int compressed_size;
     char choice;
 
+    system("cls");
+    printf("\n============= TESTING ================");
+    printf("\n=========== CMP / DECMP ==============\n");
+
     //get user input
-    printf("Enter a string to compress:\n> ");
+    printf("\nEnter a string to compress:\n> ");
     fgets((char*)input, sizeof(input), stdin);
 
     //remove newline character if present
@@ -83,6 +87,8 @@ void huffmanDemo() {
 
     //display result
     printf("\nDecompressed string:\n%s\n", decompressed);
+
+    enterToContinue();
 }
 
 //strip enter
@@ -99,7 +105,11 @@ void xorDemo() {
 	char choice[8];
 	char key;
 
-	printf("Enter a character key for XOR encryption: ");
+    system("cls");
+    printf("\n============= TESTING ================");
+    printf("\n======== ENCRYPT / DECRYPT ===========\n");
+
+	printf("\nEnter a character key for XOR encryption: ");
 	scanf(" %c", &key);
 	getchar(); // consume leftover newline
 
@@ -127,13 +137,15 @@ void xorDemo() {
 		xorDecrypt(encoded, decoded, key);
 		printf("\nDecrypted text:\n%s\n", decoded);
 	}
-    Sleep(10000);
-	clearScreen();
+    enterToContinue();
 }
 
 //error detection wrapper function
 void testErrDetection(HANDLE* hComTx) {
     system("cls");
+    printf("\n============= TESTING ================");
+    printf("\n=========== ERROR DETECT =============\n\n");
+
     printf("Send normal quote (1)\nSend corrupted quote (2)\n");
     int errorChoice = getInput();
 
@@ -147,8 +159,7 @@ void testErrDetection(HANDLE* hComTx) {
         printf("Invalid choice.\n");
     }
 
-    Sleep(3000);
-    clearScreen();
+    enterToContinue();
 }
 
 //error testing
