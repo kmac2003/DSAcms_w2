@@ -100,7 +100,19 @@ void sendTextWithHeader(HANDLE* hComTx) {
 			inputSize, payloadSize, (100.0f * payloadSize) / inputSize);
 	}
 	else if (cfg.COMPRESS == HUFFMAN) {
-		//add huffman text compression here
+		// Allocate worst-case buffer for Huffman compression (input + 384 bytes)
+		payload = new unsigned char[inputSize + 384];
+		payloadSize = compressTextHuffman(inBytes, inputSize, payload, inputSize + 384);
+
+		if (payloadSize <= 0) {
+			printf("Huffman compression failed, sending uncompressed text.\n");
+			payload = inBytes;
+			payloadSize = inputSize;
+		}
+		else {
+			printf("Text compression (Huffman): %u -> %d bytes (%.1f%%)\n",
+				inputSize, payloadSize, (100.0f * payloadSize) / inputSize);
+		}
 	}
 	else {
 		//compression is off, send as is
@@ -149,7 +161,19 @@ void recordAndSendAudio(HANDLE* hComTx) {
 			inputSize, payloadSize, (100.0f * payloadSize) / inputSize);
 	}
 	else if (cfg.COMPRESS == HUFFMAN) {
-		//add huffman audio compression here
+		// Allocate worst-case buffer for Huffman compression (input + 384 bytes)
+		payload = new unsigned char[inputSize + 384];
+		payloadSize = compressAudioHuffman(inBytes, inputSize, payload, inputSize + 384);
+
+		if (payloadSize <= 0) {
+			printf("Huffman audio compression failed, sending uncompressed audio.\n");
+			payload = inBytes;
+			payloadSize = inputSize;
+		}
+		else {
+			printf("Audio compression (Huffman): %u -> %d bytes (%.1f%%)\n",
+				inputSize, payloadSize, (100.0f * payloadSize) / inputSize);
+		}
 	}
 	else {
 		//compression off, send as is

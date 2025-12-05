@@ -39,3 +39,9 @@ int compressTextRLE(unsigned char* input, unsigned int inputSize, unsigned char*
 int decompressTextRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);
 int compressAudioRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);
 int decompressAudioRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);
+
+//w7
+int compressTextHuffman(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);
+int decompressTextHuffman(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);
+int compressAudioHuffman(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);
+int decompressAudioHuffman(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize);

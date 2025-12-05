@@ -27,6 +27,8 @@ Comments:		Projects III - Coded Messaging System
 #include "settings.h"
 #include "testing.h"
 
+#define DECOMPRESS_MAX_SIZE 65536
+
 //variables
 char msgIn[BUFSIZE];
 BOOL listening = TRUE;
@@ -35,7 +37,7 @@ DWORD totalRead = 0;
 int choice = 0;
 
 //receives the message and header, then plays the string or audio
-void receiveMessage(HANDLE* hComRx){
+void receiveMessage(HANDLE* hComRx) {
 	Header rxHeader;
 	void* rxPayload = NULL;
 	DWORD bytesRead;
@@ -55,41 +57,20 @@ void receiveMessage(HANDLE* hComRx){
 	printf("RID\t\t%d\n", rxHeader.rid);
 	printf("Priority\t%d\n", rxHeader.priority);
 	printf("Size\t\t%d\n", rxHeader.payloadSize);
-	if (rxHeader.payLoadType == AUDIO) {
-		printf("PayloadType\tAUDIO\n");
-	}
-	else {
-		printf("PayloadType\tTEXT\n");
-	}
-
-	if (rxHeader.encryption == XOR) {
-		printf("Encryption\tXOR\n");
-	}
-	else if (rxHeader.encryption == VIGENERE) {
-		printf("Encryption\tVIGENERE\n");
-	}
-	else {
-		printf("Encryption\tOFF\n");
-	}
-
-	if (rxHeader.compression == RLE) {
-		printf("Compression\tRLE\n");
-	}
-	else if (rxHeader.compression == HUFFMAN) {
-		printf("Compression\tHUFFMAN\n");
-	}
-	else {
-		printf("Compression\tOFF\n");
-	}
+	printf("PayloadType\t%s\n", (rxHeader.payLoadType == AUDIO) ? "AUDIO" : "TEXT");
+	printf("Encryption\t%s\n",
+		(rxHeader.encryption == XOR) ? "XOR" :
+		(rxHeader.encryption == VIGENERE) ? "VIGENERE" : "OFF");
+	printf("Compression\t%s\n",
+		(rxHeader.compression == RLE) ? "RLE" :
+		(rxHeader.compression == HUFFMAN) ? "HUFFMAN" : "OFF");
 	printf("===================================\n");
 
 	struct tm now = getTimeStruct();
 
-	//check for errors if err detect is on
+	// Error detection if enabled
 	if (cfg.ERR_DTCT == ON) {
-		//bool ok = correctPayload((char*)rxPayload, rxHeader.payloadSize);
 		bool ok = validateReceivedPayload((char*)rxPayload, rxHeader.payloadSize);
-
 		if (!ok) {
 			printf("Payload rejected: uncorrectable error.\n");
 			free(rxPayload);
@@ -98,23 +79,85 @@ void receiveMessage(HANDLE* hComRx){
 		}
 	}
 
+	// TEXT payload
 	if (rxHeader.payLoadType == PAYLOAD_TEXT) {
-		// Ensure null-terminated string
-		char* textMessage = (char*)rxPayload;
-		textMessage[rxHeader.payloadSize - 1] = '\0';
-		printf("(%02d:%02d:%02d) %s\n", now.tm_hour, now.tm_min, now.tm_sec, textMessage);
+		unsigned char* textBuffer = (unsigned char*)rxPayload;
+		textBuffer[rxHeader.payloadSize - 1] = '\0';
 
-		// Enqueue text with header
+		printf("\nReceived Text:\n(%02d:%02d:%02d) %s\n",
+			now.tm_hour, now.tm_min, now.tm_sec, textBuffer);
+
+		// Decompression prompt for RLE or Huffman text
+		if (rxHeader.compression == RLE || rxHeader.compression == HUFFMAN) {
+			char choice;
+			printf("\nMessage is %s-compressed. Decompress message? (y/n): ",
+				(rxHeader.compression == RLE) ? "RLE" : "Huffman");
+			scanf_s(" %c", &choice);
+			while (getchar() != '\n'); // flush input buffer
+
+			if (choice == 'y' || choice == 'Y') {
+				unsigned char* decompressed =
+					(unsigned char*)malloc(DECOMPRESS_MAX_SIZE);
+
+				if (!decompressed) {
+					printf("Memory error: cannot decompress.\n");
+				}
+				else {
+					if (rxHeader.compression == RLE) {
+						RLE_Uncompress(textBuffer, decompressed, rxHeader.payloadSize);
+					}
+					else if (rxHeader.compression == HUFFMAN) {
+						Huffman_Uncompress(textBuffer, decompressed,
+							rxHeader.payloadSize,
+							DECOMPRESS_MAX_SIZE);
+					}
+
+					printf("\nDecompressed Text:\n(%02d:%02d:%02d) %s\n",
+						now.tm_hour, now.tm_min, now.tm_sec, decompressed);
+
+					free(rxPayload);
+					rxPayload = decompressed;
+				}
+			}
+		}
+
+		// Enqueue text for later processing
 		char label[MAX_FILENAME];
 		snprintf(label, MAX_FILENAME, "Text Msg %d", rxHeader.priority);
-		enqueueTextAndHdr(textMessage, label, &rxHeader);
+		enqueueTextAndHdr((char*)rxPayload, label, &rxHeader);
 	}
-	else if (rxHeader.payLoadType == PAYLOAD_AUDIO) {
-		// Cast payload to audio buffer
-		short* audioBuffer = (short*)rxPayload;
-		long numSamples = rxHeader.payloadSize / sizeof(short);
 
-		// Play audio
+	// AUDIO payload
+	else if (rxHeader.payLoadType == PAYLOAD_AUDIO) {
+		unsigned char* audioBufferBytes = (unsigned char*)rxPayload;
+		long numSamples = rxHeader.payloadSize / sizeof(short);
+		short* audioBuffer = (short*)audioBufferBytes;
+
+		// Automatic decompression for RLE or Huffman audio
+		if (rxHeader.compression == RLE || rxHeader.compression == HUFFMAN) {
+			short* decompressed = (short*)malloc(lBigBufSize * sizeof(short)); // or estimated size
+			if (!decompressed) {
+				printf("Memory error: cannot decompress audio.\n");
+			}
+			else {
+				if (rxHeader.compression == RLE) {
+					decompressAudioRLE(audioBufferBytes, rxHeader.payloadSize,
+						(unsigned char*)decompressed,
+						lBigBufSize * sizeof(short));
+				}
+				else if (rxHeader.compression == HUFFMAN) {
+					Huffman_Uncompress(audioBufferBytes, (unsigned char*)decompressed,
+						rxHeader.payloadSize,
+						lBigBufSize * sizeof(short));
+				}
+
+				audioBuffer = decompressed;
+				numSamples = lBigBufSize; // update sample count
+				free(rxPayload);
+				rxPayload = decompressed;
+			}
+		}
+
 		if (!InitializePlayback()) {
 			printf("Playback initialization failed.\n");
 			free(rxPayload);
@@ -125,7 +168,6 @@ void receiveMessage(HANDLE* hComRx){
 		PlayBuffer(audioBuffer, numSamples);
 		ClosePlayback();
 
-		// Enqueue audio with header
 		char label[MAX_FILENAME];
 		snprintf(label, MAX_FILENAME, "Audio Msg %d", rxHeader.priority);
 		enqueueAudioAndHdr(audioBuffer, numSamples, label, &rxHeader);
@@ -135,8 +177,6 @@ void receiveMessage(HANDLE* hComRx){
 	}
 
 	free(rxPayload);
-
-	// Prompt user to continue
 	enterToContinue();
 }
 

@@ -1095,7 +1095,7 @@ void rle_decompress_file(const char* input_file, const char* output_file) {
 }
 
 //w6
-//text compression and decompression
+//text RLE compression and decompression
 int compressTextRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize){
     // Allocate worst-case buffer (RLE may expand!)
     unsigned int tempMaxSize = inputSize * 2 + 10;
@@ -1123,7 +1123,7 @@ int decompressTextRLE(unsigned char* input, unsigned int inputSize, unsigned cha
     return outputMaxSize; // Caller knows expected final size
 }
 
-//audio compression and decompression
+//audio RLE compression and decompression
 int compressAudioRLE(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize){
     unsigned int tempMaxSize = inputSize * 2 + 10;
     unsigned char* tempBuffer = new unsigned char[tempMaxSize];
@@ -1147,3 +1147,37 @@ int decompressAudioRLE(unsigned char* input, unsigned int inputSize, unsigned ch
     delete[] tempBuffer;
     return outputMaxSize;
 }
+
+//w7
+//text HUFF compress / decompress
+int compressTextHuffman(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize)
+{
+    // Huffman requires output buffer to be larger than input
+    if (outputMaxSize < inputSize + 384)
+        return -1;
+
+    return Huffman_Compress(input, output, inputSize);
+}
+
+int decompressTextHuffman(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize)
+{
+    // outputMaxSize must be >= original uncompressed size
+    Huffman_Uncompress(input, output, inputSize, outputMaxSize);
+    return outputMaxSize; // caller must know expected size
+}
+
+//audio HUFF compress / decompress
+int compressAudioHuffman(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize)
+{
+    if (outputMaxSize < inputSize + 384)
+        return -1;
+
+    return Huffman_Compress(input, output, inputSize);
+}
+
+int decompressAudioHuffman(unsigned char* input, unsigned int inputSize, unsigned char* output, unsigned int outputMaxSize)
+{
+    Huffman_Uncompress(input, output, inputSize, outputMaxSize);
+    return outputMaxSize;
+}
+
