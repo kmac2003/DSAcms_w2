@@ -168,6 +168,8 @@ void recordAndSendAudio(HANDLE* hComTx) {
 
 	CloseRecording();
 	printf("Audio transmission complete.\n");
+
+	enterToContinue();
 }
 
 //**********************************************************************************    MAIN TRANSMITTER LOOPS

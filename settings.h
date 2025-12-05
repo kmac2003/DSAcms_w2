@@ -19,7 +19,6 @@ Comments:		Projects III - Coded Messaging System
 #define HUFFMAN 1
 #define RLE 2
 
-
 void configureComPorts();
 void toggleHeader();
 void toggleErrorDtct();

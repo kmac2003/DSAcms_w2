@@ -87,8 +87,8 @@ void receiveMessage(HANDLE* hComRx){
 
 	//check for errors if err detect is on
 	if (cfg.ERR_DTCT == ON) {
-		bool ok = correctPayload((char*)rxPayload, rxHeader.payloadSize);
-		//bool ok = validateReceivedPayload((char*)rxPayload, rxHeader.payloadSize);
+		//bool ok = correctPayload((char*)rxPayload, rxHeader.payloadSize);
+		bool ok = validateReceivedPayload((char*)rxPayload, rxHeader.payloadSize);
 
 		if (!ok) {
 			printf("Payload rejected: uncorrectable error.\n");

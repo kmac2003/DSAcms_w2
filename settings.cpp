@@ -25,26 +25,18 @@ Comments:		Projects III - Coded Messaging System
 #include "encrypt.h"
 #include "settings.h"
 
-//headers
-int inToggleHeader = TRUE;
-//encryption
-int inEncryptType = TRUE;
-//compression
-int inCompressType = TRUE;
-//SID
-int inSID = TRUE;
-
 //**********************************************************************************    MODIFY SETTING FUNCTIONS
 //allow user to select desired com port numbers
 void configureComPorts() {
     system("cls");
-    printf("=== COM Port Configuration ===\n");
-    printf("Current COM ports: Tx = COM%d, Rx = COM%d\n", cfg.COM_TX, cfg.COM_RX);
+    printf("\n============= SETTINGS =============");
+    printf("\n========== COM Port Config =========\n");
+    printf("\nCurrent COM ports: Tx = COM%d, Rx = COM%d\n", cfg.COM_TX, cfg.COM_RX);
 
-    printf("\nEnter new Transmitter COM number: ");
+    printf("\nEnter new Transmitter COM number\n");
     cfg.COM_TX = getInput();
 
-    printf("Enter new Receiver COM number: ");
+    printf("\nEnter new Receiver COM number\n");
     cfg.COM_RX = getInput();
 
     //update port nums
@@ -60,8 +52,9 @@ void configureComPorts() {
 //allow user to turn message headers on/off
 void toggleHeader() {
     system("cls");
-    printf("\n=== Enable or disable headers ===\n");
-    printf("1 = ON\n0 = OFF\n");
+    printf("\n============= SETTINGS =============");
+    printf("\n========== Toggle headers ==========\n");
+    printf("\n1 = ON\n0 = OFF\n");
 
     int choice = getInput();
     cfg.HEADERS = (choice == 1) ? 1 : 0;
@@ -75,8 +68,9 @@ void toggleHeader() {
 //allow user to toggle the detection of errors in messages
 void toggleErrorDtct(){
     system("cls");
-    printf("\n=== Enable or disable error detection ===\n");
-    printf("1 = ON\n0 = OFF\n");
+    printf("\n============= SETTINGS =============");
+    printf("\n====== Toggle error detection ======\n");
+    printf("\n1 = ON\n0 = OFF\n");
 
     int choice = getInput();
     cfg.ERR_DTCT = (choice == 1) ? 1 : 0;
@@ -90,14 +84,23 @@ void toggleErrorDtct(){
 //set encryption type (Vigenere or XOR)
 void encryptType() {
     system("cls");
-    printf("\n=== Set encryption type ===\n");
-    printf("1 = XOR\n2 = VIGENERE\n0 = OFF\n");
+    printf("\n============= SETTINGS =============");
+    printf("\n======= Set encryption type ========\n");
+    printf("\n1 = XOR\n2 = VIGENERE\n0 = OFF\n");
 
     int choice = getInput();
     if (choice >= 0 && choice <= 2) {
         cfg.ENCRYPT = choice;
         saveConfig(CONFIG_FILE, &cfg);
-        printf("\nEncryption mode updated.\n");
+        if (cfg.ENCRYPT == XOR) {
+            printf("\nEncryption set to XOR\n");
+        }
+        else if (cfg.ENCRYPT == VIGENERE) {
+            printf("\nEncryption set to VIGENERE\n");
+        }
+        else {
+            printf("\nEncryption OFF\n");
+        }
     }
     else {
         invalid();
@@ -108,25 +111,36 @@ void encryptType() {
 //set encryption type (Huffman or RLE)
 void compressType() {
     system("cls");
-    printf("\n=== Set compression type ===\n");
-    printf("1 = Huffman\n2 = RLE\n0 = OFF\n");
+    printf("\n============= SETTINGS =============");
+    printf("\n======= Set compression type =======\n");
+    printf("\n1 = Huffman\n2 = RLE\n0 = OFF\n");
 
     int choice = getInput();
     if (choice >= 0 && choice <= 2) {
         cfg.COMPRESS = choice;
         saveConfig(CONFIG_FILE, &cfg);
-        printf("\nCompression mode updated.\n");
+        if (cfg.COMPRESS == RLE) {
+            printf("\nCompression set to RLE\n");
+        }
+        else if (cfg.COMPRESS == HUFFMAN) {
+            printf("\nCompression set to HUFFMAN\n");
+        }
+        else {
+            printf("\nCompression OFF\n");
+        }
     }
     else {
         invalid();
     }
+    enterToContinue();
 }
 
 //write sender ID number
 void configSID() {
     system("cls");
-    printf("\n=== Configure Sender ID ===\n");
-    printf("Enter integer 0–255: ");
+    printf("\n============= SETTINGS =============");
+    printf("\n=========== Configure SID ==========\n");
+    printf("\nEnter integer (0 to 255)\n");
 
     int number = getInput();
     if (number >= 0 && number <= 255) {

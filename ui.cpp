@@ -38,8 +38,6 @@ struct tm getTimeStruct() {
 }
 
 
-
-
 //**********************************************************************************    MENU QOL FUNCTIONS
 //program quit
 void quit() {
@@ -90,7 +88,7 @@ void enterToContinue() {
 int selectStation() {
     struct tm now = getTimeStruct();
     printf("================================\n");
-    printf("    & CMS: Kien Matthew Troy\n");
+    printf("    CMS: Kien Matthew Troy\n");
     printf("    Date: (%02d:%02d:%02d)\n", now.tm_mday, (now.tm_mon + 1), (now.tm_year) + 1900);
     printf("================================\n");
     printf("1 - Transmit\n");
@@ -116,8 +114,8 @@ void receivingMenu(){
 
 //navigate the queued messages
 void queueMenu() {
-    printf("\n============= RECEIVING ============\n");
-    printf("\n============= QUEUE ================\n");
+    printf("\n============= RECEIVING ============");
+    printf("\n=============== QUEUE ==============\n");
     printf("1. Show full queue\n");
     printf("2. See first message\n");
     printf("3. Discard first message\n");

@@ -158,8 +158,6 @@ void testErrDetection(HANDLE* hComTx) {
     else {
         printf("Invalid choice.\n");
     }
-
-    enterToContinue();
 }
 
 //error testing
@@ -170,7 +168,7 @@ unsigned char computeChecksum(const char* data, int length) {
     }
     return (unsigned char)(sum & 0xFF); // modulo 256
 }
-
+/*
 //introduce intentional errors
 void introduceBitErrors(char* data, int length, float errorRate) {
     // Only introduce an error based on probability
@@ -188,8 +186,8 @@ void introduceBitErrors(char* data, int length, float errorRate) {
         printf("Injected 1-bit error at byte %d (bit mask 0x%02X)\n", byteIndex, bit);
     }
 }
+*/
 
-/*
 void introduceBitErrors(char* data, int length, float errorRate) {
     for (int i = 0; i < length; i++) {
         if ((float)rand() / RAND_MAX < errorRate) {
@@ -198,7 +196,7 @@ void introduceBitErrors(char* data, int length, float errorRate) {
         }
     }
 }
-*/
+
 
 //send a corrupted quote with the checksum
 void sendCorruptedQuote(HANDLE* hComTx) {
